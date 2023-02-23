@@ -1,12 +1,14 @@
+
+import csv
 import requests 
 from bs4 import BeautifulSoup
 
-''' For this project I am using fbref.com to scrape my football data
+''' For this project I am using fbref.com to scrape most of my football data
     There are many different options to choose from, also using an
     API is another viable option but will probably cost money for the 
     size of the batch process'''
 
-# PLAYER STATS
+# PLAYER FOOTBALL STATS
 
 # python3 BatchData_Pipeline.py
 
@@ -37,9 +39,10 @@ with open('Player-Data', 'rb') as pd:
             name = i.a.text
             nationality = ((i.find('td', {'data-stat':'nationality'})).text)[-3:]
             position = (i.find('td', {'data-stat':'position'})).text
-            age = (i.find('td', {'data-stat':'age'})).text
+            age = ((i.find('td', {'data-stat':'age'})).text)[:2]
             starts = (i.find('td', {'data-stat':'games_starts'})).text
             minutes = (i.find('td', {'data-stat':'minutes'})).text
+            minutes = int(minutes.replace(',',''))
             goals = (i.find('td', {'data-stat':'goals'})).text
             assists = (i.find('td', {'data-stat':'assists'})).text
             y_card = (i.find('td', {'data-stat':'cards_yellow'})).text
@@ -139,8 +142,103 @@ with open('Player-Data', 'rb') as pd:
             player_stats[index].append(t_att_pen)
             player_stats[index].append(sucessful_takeons)
 
+    # possession stats
+
+    table_body = soup.find("div", { "id" : "div_stats_misc_9" })
+    rows = table_body.find_all("tr")    
+
+    for index, value in enumerate(rows[2:-2]):
+
+            aerial_duels_won = (value.find('td', {'data-stat':'aerials_won_pct'})).text
+            player_stats[index].append(aerial_duels_won)
+
+# turning empty values to null
+for player in player_stats:
+    for index, data_point in enumerate(player):
+        if data_point == '':
+            player[index] = 'NULL'
 
 
+
+# removing Ronaldo
+for index, player in enumerate(player_stats):
+    if player[0] == 'Cristiano Ronaldo':
+        player_stats.pop(index)
+
+# GETTING WAGE FROM ANOTHER SITE AS BREF NOT GOT ALL INFO
+
+'''url = 'https://salarysport.com/football/premier-league/manchester-united-f.c./'
+response = requests.get(url)
+with open ('Player-Salary', 'wb') as p:
+    p.write(response.content)'''
+
+with open('Player-Salary', 'rb') as pd:
+    soup = BeautifulSoup(pd.read(), 'html.parser')
+
+tbody = soup.find_all('tbody')
+
+for table in tbody:
+    for row in table:
+        data = (row.find_all('td'))
+        name = data[0].text
+        try:
+            salary = (data[2].text)[1:]
+            salary = int(salary.replace(',',''))
+        except IndexError:
+            continue
+        for index, value in enumerate(player_stats):
+            if value[0].lower() == name.lower():
+                player_stats[index].append(salary)
+
+# GETTING CURRENT ESTIMATED MARKET VALUE
+
+'''url = 'https://www.footballtransfers.com/en/teams/uk/man-utd'
+response = requests.get(url)
+with open ('Player-Market-Value', 'wb') as p:
+    p.write(response.content)
+'''
+with open('Player-Market-Value', 'rb') as pd:
+    soup = BeautifulSoup(pd.read(), 'html.parser')
+
+tbody = soup.find('table')
+
+rows = soup.find_all('tr')
+
+for row in rows:
+    try:
+        name = row.a.text
+        worth = (row.find('span', class_ = 'player-tag').text)[1:-1]
+        worth = round(float(worth) * 0.88, 2)
+        
+        for index, value in enumerate(player_stats):
+            if len(value) == 35:
+                if value[0].lower() == name.lower():
+            
+                    player_stats[index].append(worth)
+    except AttributeError:
+        continue
+
+
+
+  
+  
+# field names 
+fields = ['name', 'nationality', 'position', 'age', 'matches_played', 'starts', 'minutes', 'goals',
+'assists', 'y_card', 'r_card', 'pro_carries', 'pro_passes', 'goals_conceeded', 'shots_on_target_against', 
+'saves', 'clean_sheets', 'shots', 'shots_on_target', 'passes_com', 'passes_com_s', 'passes_com_m',
+'passes_com_l', 'key_passes', 'passes_into_third', 'crosses_into_pen', 'touches', 't_def_pen', 't_def_third', 
+'t_mid_third', 't_att_third', 't_att_pen', 'sucessful_takeons', 'aerial_duels_won','salary', 'estimated_market_value'] 
+    
+# data rows of csv file 
+
+  
+with open('Player.csv', 'w') as p:
+      
+    # using csv.writer method from CSV package
+    write = csv.writer(p)
+      
+    write.writerow(fields)
+    write.writerows(player_stats)
     
 
 
@@ -148,4 +246,3 @@ with open('Player-Data', 'rb') as pd:
 
 
 
-    print(player_stats[-1])
