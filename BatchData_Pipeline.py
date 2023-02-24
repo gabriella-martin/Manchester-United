@@ -9,15 +9,18 @@ from bs4 import BeautifulSoup
 
 # PLAYER FOOTBALL STATS
 
-urls = ['https://fbref.com/en/squads/19538871/Manchester-United-Stats', 'https://salarysport.com/football/premier-league/manchester-united-f.c./', 'https://www.footballtransfers.com/en/teams/uk/man-utd']
+# run this after each game for up to date results
+
+'''urls = ['https://fbref.com/en/squads/19538871/Manchester-United-Stats', 'https://salarysport.com/football/premier-league/manchester-united-f.c./', 'https://www.footballtransfers.com/en/teams/uk/man-utd']
 data_type = ['Data', 'Salary', 'Market-Value']
+
 for index, url in enumerate(urls):
-    data_type = data_type[index]
     response = requests.get(url)
-    with open (f'Player-{data_type}', 'wb') as p:
-        p.write(response.content)
+    with open (f'Player-{data_type[index]}', 'wb') as p:
+        p.write(response.content)'''
 
 class BrefParser:
+    
     def __init__(self):
         with open('Player-Data', 'rb') as pd:
             self.soup = BeautifulSoup(pd.read(), 'html.parser')
@@ -77,7 +80,7 @@ class BrefParser:
         # filing non goalkeeper statistics with null
         for player in list_of_player_stats:
             if len(player) == 13:
-                for i in range(0,5):
+                for i in range(0,4):
                     player.append('NULL')
         return list_of_player_stats
 
@@ -141,8 +144,32 @@ class BrefParser:
 
         for index, value in enumerate(rows[2:-2]):
                 aerial_duels_won = (value.find('td', {'data-stat':'aerials_won_pct'})).text
+                fouls_committed = (value.find('td', {'data-stat':'fouls'})).text
+                fouls_drawns = (value.find('td', {'data-stat':'fouled'})).text
                 list_of_player_stats[index].append(aerial_duels_won)
+                list_of_player_stats[index].append(fouls_committed)
+                list_of_player_stats[index].append(fouls_drawns)
         return list_of_player_stats
+
+    def defending_stats_table(self):
+        list_of_player_stats = self.misc_stats_table()
+        table_body = self.soup.find("div", { "id" : "div_stats_defense_9" })
+        rows = table_body.find_all("tr")    
+
+        for index, value in enumerate(rows[2:-2]):
+                total_tackles = (value.find('td', {'data-stat':'tackles'})).text
+                successful_tackles = (value.find('td', {'data-stat':'tackles_won'})).text
+                percent_of_dribblers_tackled = (value.find('td', {'data-stat':'challenge_tackles_pct'})).text
+                blocks = (value.find('td', {'data-stat':'blocks'})).text
+                shot_blocks = (value.find('td', {'data-stat':'blocked_shots'})).text
+                interceptions = (value.find('td', {'data-stat':'interceptions'})).text
+                clearances = (value.find('td', {'data-stat':'clearances'})).text
+                defensive_stats = [total_tackles, successful_tackles, percent_of_dribblers_tackled, blocks, shot_blocks, interceptions, clearances]
+                for stat in defensive_stats:
+                    list_of_player_stats[index].append(stat)
+            
+        return list_of_player_stats
+
 
 class SalaryParser:
 
@@ -167,6 +194,7 @@ class SalaryParser:
                     if value[0].lower() == name.lower():
                         self.list_of_player_stats[index].append(salary)
                         
+                        
         return self.list_of_player_stats
 
 class MarketValueParser():
@@ -177,17 +205,19 @@ class MarketValueParser():
         self.list_of_player_stats = list_of_player_stats
     
     def get_market_worth(self):
-        
-        rows = self.soup.find_all('tr')
+        tbody = self.soup.find('table', class_ ='table table-striped-rowspan ft-table mb-0')
+        rows = tbody.find_all('tr')
+        rows = rows[2:]
         for row in rows:
             try:
                 name = row.a.text
                 worth = (row.find('span', class_ = 'player-tag').text)[1:-1]
-                worth = round(float(worth) * 0.88, 2)  
+                worth = float(worth) * 0.88
+                worth = round(worth * 1000000, 0)
                 for index, value in enumerate(self.list_of_player_stats):
-                    if len(value) == 36:
-                        if value[0].lower() == name.lower():
-                            self.list_of_player_stats[index].append(worth)
+                    if value[0].lower() in name.lower():
+                        self.list_of_player_stats[index].append(worth)
+                            
             except AttributeError:
                 continue
         return self.list_of_player_stats
@@ -217,7 +247,9 @@ class DataProcessing:
         'assists', 'yellow_card', 'red_card', 'progressive_carries', 'progressive_passes', 'goals_conceeded', 'shots_on_target_against', 
         'saves', 'clean_sheets', 'shots', 'shots_on_target', 'passes_com', 'passes_com_s', 'passes_com_m',
         'passes_com_l', 'key_passes', 'passes_into_third', 'crosses_into_pen', 'touches', 'touches_def_pen', 'touches_def_third', 
-        'touches_mid_third', 'touches_att_third', 'touches_att_pen', 'sucessful_takeons', 'aerial_duels_won','salary', 'estimated_market_value'] 
+        'touches_mid_third', 'touches_att_third', 'touches_att_pen', 'sucessful_takeons', 'aerial_duels_won',
+        'fouls_committed','fouls_drawn','total_tackles', 'successful_tackles', 'percent_of_dribblers_tackled', 'blocks', 'shot_blocks', 
+        'interceptions', 'clearances', 'salary', 'estimated_market_value'] 
         with open('Player.csv', 'w') as p:
             write = csv.writer(p)
             write.writerow(fields)
@@ -226,7 +258,7 @@ class DataProcessing:
 
 if __name__ == '__main__':
 
-    list_of_player_stats = BrefParser().misc_stats_table()
+    list_of_player_stats = BrefParser().defending_stats_table()
     list_of_player_stats = SalaryParser(list_of_player_stats).get_salary()
     list_of_player_stats = MarketValueParser(list_of_player_stats).get_market_worth()
     list_of_player_stats = DataProcessing(list_of_player_stats).export_to_csv()

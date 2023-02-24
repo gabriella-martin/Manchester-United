@@ -11,6 +11,7 @@ import psycopg2
 @st.cache_resource
 def init_connection():
     return psycopg2.connect(**st.secrets["postgres"])
+    
 
 conn = init_connection()
 
