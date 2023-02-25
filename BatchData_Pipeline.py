@@ -1,24 +1,19 @@
-import csv
+import pandas as pd
 import requests 
-from bs4 import BeautifulSoup
-
-''' For this project I am using fbref.com to scrape most of my football data
-    There are many different options to choose from, also using an
-    API is another viable option but will probably cost money for the 
-    size of the batch process'''
+from bs4 import BeautifulSoup 
 
 # PLAYER FOOTBALL STATS
 
-# run this after each game for up to date results
+# run this after each game for up-to-date results
 
-'''urls = ['https://fbref.com/en/squads/19538871/Manchester-United-Stats', 'https://salarysport.com/football/premier-league/manchester-united-f.c./', 'https://www.footballtransfers.com/en/teams/uk/man-utd']
-data_type = ['Data', 'Salary', 'Market-Value']
+'''urls = ['https://fbref.com/en/squads/19538871/Manchester-United-Stats', 'https://salarysport.com/football/premier-league/manchester-united-f.c./', 'https://www.footballtransfers.com/en/teams/uk/man-utd', 'https://www.premierleague.com/clubs/12/Manchester-United/squad']
+data_type = ['Data', 'Salary', 'Market-Value', 'Number']
 
 for index, url in enumerate(urls):
     response = requests.get(url)
     with open (f'Player-{data_type[index]}', 'wb') as p:
-        p.write(response.content)'''
-
+        p.write(response.content)
+'''
 class BrefParser:
     
     def __init__(self):
@@ -46,13 +41,14 @@ class BrefParser:
             starts = (i.find('td', {'data-stat':'games_starts'})).text
             minutes = (i.find('td', {'data-stat':'minutes'})).text
             minutes = int(minutes.replace(',',''))
+            ninetys = ((i.find('td', {'data-stat':'minutes_90s'})).text)
             goals = (i.find('td', {'data-stat':'goals'})).text
             assists = (i.find('td', {'data-stat':'assists'})).text
             cards_yellow = (i.find('td', {'data-stat':'cards_yellow'})).text
             cards_red = (i.find('td', {'data-stat':'cards_red'})).text
             progressive_carries = (i.find('td', {'data-stat':'progressive_carries'})).text
             progressive_passes = (i.find('td', {'data-stat':'progressive_passes'})).text
-            player_list = [name, nationality, position, age, matches_played, starts, minutes, goals, assists, cards_yellow, cards_red, progressive_carries, progressive_passes]
+            player_list = [name, nationality, position, age, matches_played, starts, minutes, ninetys,  goals, assists, cards_yellow, cards_red, progressive_carries, progressive_passes]
             for stat in player_list:
                 player.append(stat)
 
@@ -79,9 +75,10 @@ class BrefParser:
 
         # filing non goalkeeper statistics with null
         for player in list_of_player_stats:
-            if len(player) == 13:
+            if len(player) == 14:
                 for i in range(0,4):
                     player.append('NULL')
+
         return list_of_player_stats
 
     def shooting_stats_table(self):
@@ -112,8 +109,8 @@ class BrefParser:
                 passes_com_long = (value.find('td', {'data-stat':'passes_pct_long'})).text
                 key_passes = (value.find('td', {'data-stat':'assisted_shots'})).text
                 passes_into_third = (value.find('td', {'data-stat':'passes_into_final_third'})).text
-                crosses_into_pen = (value.find('td', {'data-stat':'crosses_into_penalty_area'})).text
-                passing_stats = [passes_com, passes_com_short, passes_com_medium, passes_com_long, key_passes, passes_into_third, crosses_into_pen]
+                passes_into_pen = (value.find('td', {'data-stat':'passes_into_penalty_area'})).text
+                passing_stats = [passes_com, passes_com_short, passes_com_medium, passes_com_long, key_passes, passes_into_third, passes_into_pen]
                 for stat in passing_stats:
                     list_of_player_stats[index].append(stat)
         return list_of_player_stats
@@ -170,7 +167,6 @@ class BrefParser:
             
         return list_of_player_stats
 
-
 class SalaryParser:
 
     def __init__(self, list_of_player_stats):
@@ -197,7 +193,7 @@ class SalaryParser:
                         
         return self.list_of_player_stats
 
-class MarketValueParser():
+class MarketValueParser:
 
     def __init__(self,list_of_player_stats):
         with open('Player-Market-Value', 'rb') as pd:
@@ -222,15 +218,33 @@ class MarketValueParser():
                 continue
         return self.list_of_player_stats
 
+class PlayerNumberParser:
+    def __init__(self,list_of_player_stats):
+        with open('Player-Number', 'rb') as pd:
+            self.soup = BeautifulSoup(pd.read(), 'html.parser')
+        self.list_of_player_stats = list_of_player_stats
+    
+    def get_player_number(self):
+        tbody = self.soup.find_all('span', class_ ='playerCardInfo')
+        for player in tbody:
+            name = (player.find('h4')).text
+            number = (player.find('span', class_ = 'number')).text
+            for index, value in enumerate(self.list_of_player_stats):
+                if name.lower() == value[0].lower():
+                    self.list_of_player_stats[index].append(number)
+        return self.list_of_player_stats
+ 
 class DataProcessing:
 
     def __init__(self, list_of_player_stats):
         list_of_player_stats = list_of_player_stats
 
+
     def remove_ronaldo(self):
         for index, player in enumerate(list_of_player_stats):
             if player[0] == 'Cristiano Ronaldo':
                 list_of_player_stats.pop(index)
+
         return list_of_player_stats
 
     def empty_values_to_null(self):
@@ -239,30 +253,32 @@ class DataProcessing:
             for index, data_point in enumerate(player):
                 if data_point == '':
                     player[index] = 'NULL'
+
         return list_of_player_stats
+    
 
     def export_to_csv(self):
         list_of_player_stats = self.empty_values_to_null()
-        fields = ['name', 'nationality', 'position', 'age', 'matches_played', 'starts', 'minutes', 'goals',
+
+
+        fields = ['name', 'nationality', 'position', 'age', 'matches_played', 'starts', 'minutes', 'ninteys','goals',
         'assists', 'yellow_card', 'red_card', 'progressive_carries', 'progressive_passes', 'goals_conceeded', 'shots_on_target_against', 
         'saves', 'clean_sheets', 'shots', 'shots_on_target', 'passes_com', 'passes_com_s', 'passes_com_m',
-        'passes_com_l', 'key_passes', 'passes_into_third', 'crosses_into_pen', 'touches', 'touches_def_pen', 'touches_def_third', 
+        'passes_com_l', 'key_passes', 'passes_into_third', 'passes_into_pen', 'touches', 'touches_def_pen', 'touches_def_third', 
         'touches_mid_third', 'touches_att_third', 'touches_att_pen', 'sucessful_takeons', 'aerial_duels_won',
         'fouls_committed','fouls_drawn','total_tackles', 'successful_tackles', 'percent_of_dribblers_tackled', 'blocks', 'shot_blocks', 
-        'interceptions', 'clearances', 'salary', 'estimated_market_value'] 
-        with open('Player.csv', 'w') as p:
-            write = csv.writer(p)
-            write.writerow(fields)
-            write.writerows(list_of_player_stats)
+        'interceptions', 'clearances', 'salary', 'estimated_market_value', 'number'] 
+        
+        df = pd.DataFrame(list_of_player_stats, columns=fields)
 
+        df.to_csv('Player.csv')
+    
 
 if __name__ == '__main__':
 
     list_of_player_stats = BrefParser().defending_stats_table()
     list_of_player_stats = SalaryParser(list_of_player_stats).get_salary()
     list_of_player_stats = MarketValueParser(list_of_player_stats).get_market_worth()
+    list_of_player_stats = PlayerNumberParser(list_of_player_stats).get_player_number()
     list_of_player_stats = DataProcessing(list_of_player_stats).export_to_csv()
-
-
-
 
