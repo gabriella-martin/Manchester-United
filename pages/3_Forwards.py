@@ -41,7 +41,7 @@ class ForwardStatCard:
             self.width = 423
         else:
             self.width = 450
-        self.image_path = (self.player.split(' '))[-1]
+        self.image_path = ((self.player.split(' '))[-1]).lower()
         s = PlayerStatFormatting(player)
         self.number = s.number
         self.general_stats = s.format_general_stats()

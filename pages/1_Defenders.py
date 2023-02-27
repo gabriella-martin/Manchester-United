@@ -37,7 +37,7 @@ name_list = [num for sublist in name_list for num in sublist]
 class DefenderStatCard:
     def __init__(self,player):
         self.player = player
-        self.image_path = (self.player.split(' '))[-1]
+        self.image_path = ((self.player.split(' '))[-1]).lower()
         s = PlayerStatFormatting(player)
         self.number = s.number
         self.general_stats = s.format_general_stats()

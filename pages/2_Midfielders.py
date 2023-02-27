@@ -38,7 +38,7 @@ class MidfielderStatCard:
 
     def __init__(self,player):
         self.player = player
-        self.image_path = (self.player.split(' '))[-1]
+        self.image_path = ((self.player.split(' '))[-1]).lower()
         s = PlayerStatFormatting(player)
         self.minutes_played = round((s.ninetys)*90)
         self.number = s.number

@@ -12,3 +12,5 @@ st.set_page_config(
     initial_sidebar_state='collapsed')
 
 add_logo("logo.png", height=210)
+
+st.write('# <- CLICK HERE TO SHOW SIDEBAR')
