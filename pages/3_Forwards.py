@@ -37,10 +37,6 @@ class ForwardStatCard:
 
     def __init__(self,player):
         self.player = player
-        if self.player == 'Anthony Martial':
-            self.width = 423
-        else:
-            self.width = 450
         self.image_path = ((self.player.split(' '))[-1]).lower()
         s = PlayerStatFormatting(player)
         self.number = s.number
@@ -53,26 +49,26 @@ class ForwardStatCard:
             with st.expander(label=f'**{self.player}: {self.number}**', expanded=True ):
                 tabs = st.tabs(['General', 'Game Involvement', 'Upfield Play' ])
                 with tabs[0]:
-                    cols = st.columns([4,4,8])
-                    with cols[2]:
-                        st.image(f'players/{self.image_path}.png', width=self.width,)
+                    cols = st.columns([8,4,4])
                     with cols[0]:
+                        st.image(f'players/{self.image_path}.png', width=380)
+                    with cols[1]:
                         st.write('')
                         st.metric(label='AGE', value =self.general_stats[0])
                         st.metric(label='SALARY', value =self.general_stats[1])
-                        st.metric(label='EST. MARKET VALUE', value =self.general_stats[2])
+                        st.metric(label='MARKET VALUE', value =self.general_stats[2])
                         st.metric(label='TOUCHES/90', value =self.general_stats[3])
-                    with cols[1]:
-                        st.write('')
-                        st.metric(label='PASS ACCURACY', value =str(self.general_stats[4]) + '%')
-                        st.metric(label='SHORT PASSES', value =str(self.general_stats[5]) + '%')
-                        st.metric(label='MEDIUM PASSES', value =str(self.general_stats[6]) + '%')
-                        st.metric(label='LONG PASSES', value =str(self.general_stats[7]) + '%')       
-                with tabs[1]:
-                    cols = st.columns([4,4,8])
                     with cols[2]:
-                        st.image(f'players/{self.image_path}.png', width=self.width)
+                        st.write('')
+                        st.metric(label='PASS ACCURACY', value =str(round(self.general_stats[4])) + '%')
+                        st.metric(label='SHORT PASSES', value =str(round(self.general_stats[5])) + '%')
+                        st.metric(label='MEDIUM PASSES', value =str(round(self.general_stats[6])) + '%')
+                        st.metric(label='LONG PASSES', value =str(round(self.general_stats[7])) + '%')     
+                with tabs[1]:
+                    cols = st.columns([8,4,4])
                     with cols[0]:
+                        st.image(f'players/{self.image_path}.png', width=380)
+                    with cols[1]:
                         st.write('')
                         st.write('')
                         st.write('')
@@ -82,7 +78,7 @@ class ForwardStatCard:
                         st.metric(label='TOCUHES IN PEN/90', value =self.involvement_stats[1])
                         st.metric(label='FOULS DRAWN/90', value =self.involvement_stats[2])
                         
-                    with cols[1]:
+                    with cols[2]:
                         st.write('')
                         st.write('')
                         st.write('')
@@ -93,16 +89,16 @@ class ForwardStatCard:
                         st.metric(label='PROG PASSES/90', value =self.involvement_stats[5])  
 
                 with tabs[2]:
-                    cols = st.columns([4,4,8])
-                    with cols[2]:
-                        st.image(f'players/{self.image_path}.png', width=self.width)
+                    cols = st.columns([8,4,4])
                     with cols[0]:
+                        st.image(f'players/{self.image_path}.png', width=380)
+                    with cols[1]:
                         st.write('')
                         st.metric(label='SHOTS/90', value =self.scoring_stats[0])
                         st.metric(label='ON TARGET/90', value =self.scoring_stats[1])
                         st.metric(label='SHOT ACCURACY', value =str(self.scoring_stats[2]) + '%')
                         st.metric(label='FINISHING ACCURACY', value =str(self.scoring_stats[3]) + '%')     
-                    with cols[1]:
+                    with cols[2]:
                         st.write('')
                         st.metric(label='ASSISTS/90', value =self.scoring_stats[4])
                         st.metric(label='GOALS/90', value =self.scoring_stats[5])
@@ -113,11 +109,26 @@ class ForwardStatCard:
 
 large_cols = st.columns(2)
 for index, name in enumerate(name_list):
-    if index in [0,2,4,6,8]:
-        with large_cols[0]:
-            df = ForwardStatCard(player=name)
-            df.make_card()
+    if len(name_list)%2 == 0:
+        if index%2 == 0:
+            with large_cols[0]:
+                df = ForwardStatCard(player=name)
+                df.make_card()
+        else:
+            with large_cols[1]:
+                df = ForwardStatCard(player=name)
+                df.make_card()
     else:
-        with large_cols[1]:
-            df = ForwardStatCard(player=name)
-            df.make_card()
+        if index%2 == 0:
+            with large_cols[0]:
+                df = ForwardStatCard(player=name)
+                df.make_card()
+        else:
+            if  index == len(name_list) -1:
+                cols = st.columns[1,5,1]
+                with cols[1]:
+                  df = ForwardStatCard(player=name)
+                  df.make_card()  
+            with large_cols[1]:
+                df = ForwardStatCard(player=name)
+                df.make_card()

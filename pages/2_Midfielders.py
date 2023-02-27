@@ -25,8 +25,8 @@ df = pd.read_csv('Player.csv')
 
 #retrieving names of midfielders who have played more than 90min as less than 90min gives inaccurate results
 
-defender_query = '''SELECT name from df WHERE position ='MF' AND ninteys >1 ;'''
-names = pysqldf(defender_query).values
+midfielder_query = '''SELECT name from df WHERE position ='MF' AND ninteys >1 ;'''
+names = pysqldf(midfielder_query).values
 name_list = []
 for i in names:
     name_list.append(i.tolist())
@@ -51,32 +51,32 @@ class MidfielderStatCard:
             with st.expander(label=f'**{self.player}: {self.number}**', expanded=True ):
                 tabs = st.tabs(['General', 'Threat-Handling', 'Upfield Play' ])
                 with tabs[0]:
-                    cols = st.columns([4,4,8])
-                    with cols[2]:
-                        st.image(f'players/{self.image_path}.png', width=450,)
+                    cols = st.columns([8,4,4])
                     with cols[0]:
+                        st.image(f'players/{self.image_path}.png', width=380,)
+                    with cols[1]:
                         st.write('')
                         st.metric(label='AGE', value =self.general_stats[0])
                         st.metric(label='SALARY', value =self.general_stats[1])
-                        st.metric(label='EST. MARKET VALUE', value =self.general_stats[2])
+                        st.metric(label='MARKET VALUE', value =self.general_stats[2])
                         st.metric(label='TOUCHES/90', value =self.general_stats[3])
-                    with cols[1]:
-                        st.write('')
-                        st.metric(label='PASS ACCURACY', value =str(self.general_stats[4]) + '%')
-                        st.metric(label='SHORT PASSES', value =str(self.general_stats[5]) + '%')
-                        st.metric(label='MEDIUM PASSES', value =str(self.general_stats[6]) + '%')
-                        st.metric(label='LONG PASSES', value =str(self.general_stats[7]) + '%')       
-                with tabs[1]:
-                    cols = st.columns([4,4,8])
                     with cols[2]:
-                        st.image(f'players/{self.image_path}.png', width=450)
+                        st.write('')
+                        st.metric(label='PASS ACCURACY', value =str(round(self.general_stats[4])) + '%')
+                        st.metric(label='SHORT PASSES', value =str(round(self.general_stats[5])) + '%')
+                        st.metric(label='MEDIUM PASSES', value =str(round(self.general_stats[6])) + '%')
+                        st.metric(label='LONG PASSES', value =str(round(self.general_stats[7])) + '%')       
+                with tabs[1]:
+                    cols = st.columns([8,4,4])
                     with cols[0]:
+                        st.image(f'players/{self.image_path}.png', width=400)
+                    with cols[1]:
                         st.write('')
                         st.metric(label='SHOT BLOCKS/90', value =self.threat_stats[0])
                         st.metric(label='BLOCKS/90', value =self.threat_stats[1])
                         st.metric(label='INTERCEPTIONS/90', value =self.threat_stats[2])
                         st.metric(label='CLEARANCES/90', value =self.threat_stats[3])
-                    with cols[1]:
+                    with cols[2]:
                         st.write('')
                         st.metric(label='TACKLE SUCCESS %', value =str(self.threat_stats[4]) + '%')
                         st.metric(label='TACKLES/90', value =self.threat_stats[5])
@@ -87,18 +87,18 @@ class MidfielderStatCard:
                         st.metric(label='FOULS/90', value =self.threat_stats[7])  
 
                 with tabs[2]:
-                    cols = st.columns([4,4,8])
-                    with cols[2]:
-                        st.image(f'players/{self.image_path}.png', width=450)
+                    cols = st.columns([8,4,4])
                     with cols[0]:
+                        st.image(f'players/{self.image_path}.png', width=400)
+                    with cols[1]:
                         st.write('')
                         st.metric(label='SHOTS/90', value =self.upfield_stats[0])
                         st.metric(label='SHOTS ON TARGET/90', value =self.upfield_stats[1])
                         st.metric(label='ASSISTS/90', value =self.upfield_stats[2])
                         st.metric(label='GOALS/90', value =self.upfield_stats[3])     
-                    with cols[1]:
+                    with cols[2]:
                         st.write('')
-                        st.metric(label='PASSES INTO PEN/90', value =self.upfield_stats[4])
+                        st.metric(label='PASS into PEN/90', value =self.upfield_stats[4])
                         st.metric(label='PROG PASSES/90', value =self.upfield_stats[5])
                         st.metric(label='PROG CARRIES/90', value =self.upfield_stats[6])
                         st.metric(label='KEY PASSES/90', value =self.upfield_stats[7])     
@@ -107,7 +107,7 @@ class MidfielderStatCard:
                         
 large_cols = st.columns(2)
 for index, name in enumerate(name_list):
-    if index in [0,2,4,6,8]:
+    if index%2 == 0:
         with large_cols[0]:
             df = MidfielderStatCard(player=name)
             df.make_card()
