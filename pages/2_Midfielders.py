@@ -5,7 +5,7 @@ import streamlit_nested_layout
 from pandasql import sqldf
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.app_logo import add_logo
-from ServingData_Pipeline import PlayerStatFormatting
+from Pipelines.ServingData_Pipeline import PlayerStatFormatting
 
 
 st.set_page_config(
