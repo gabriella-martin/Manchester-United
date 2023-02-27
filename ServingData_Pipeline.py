@@ -143,7 +143,7 @@ class PlayerStatFormatting:
             for i in scoring_stat_values:
                 player_scoring_stats.append(i.tolist())
         player_scoring_stats = [num for sublist in player_scoring_stats for num in sublist]
-        
+
         return player_scoring_stats
     
     def format_goal_scoring_stats(self):
@@ -155,9 +155,3 @@ class PlayerStatFormatting:
         player_scoring_stats.insert(3, finishing_accuracy)
         return player_scoring_stats
     
-
-a = PlayerStatFormatting('Antony')
-a.format_goal_scoring_stats()
-
-
-# python ServingData_Pipeline.py
