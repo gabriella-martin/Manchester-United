@@ -1,30 +1,14 @@
 import streamlit as st
-
-st.write('# Manchester United Players')
+import pandas as pd
+from streamlit_extras.metric_cards import style_metric_cards
+from streamlit_extras.app_logo import add_logo
 # streamlit_app.py
-
-
+import streamlit_nested_layout
 import psycopg2
+st.set_page_config(
+    page_title="Gabriella's Dashboard",
+    page_icon="logo.png",
+    layout="wide",
+    initial_sidebar_state='collapsed')
 
-# Initialize connection.
-# Uses st.cache_resource to only run once.
-@st.cache_resource
-def init_connection():
-    return psycopg2.connect(**st.secrets["postgres"])
-    
-
-conn = init_connection()
-
-# Perform query.
-# Uses st.cache_data to only rerun when the query changes or after 10 min.
-@st.cache_data(ttl=600)
-def run_query(query):
-    with conn.cursor() as cur:
-        cur.execute(query)
-        return cur.fetchall()
-
-rows = run_query("SELECT * from players;")
-
-# Print results.
-for row in rows:
-    st.write(f"{row[0]} has a :{row[1]}:")
+add_logo("logo.png", height=210)

@@ -56,7 +56,7 @@ semver==2.13.0
 six==1.16.0
 smmap==5.0.0
 soupsieve==2.3.2.post1
-SQLAlchemy==2.0.4
+SQLAlchemy== 1.4.0
 st-annotated-text==3.0.0
 streamlit==1.18.1
 streamlit-camera-input-live==0.2.0
