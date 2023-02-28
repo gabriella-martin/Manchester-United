@@ -21,7 +21,7 @@ class StatCard:
         self.general_stats = self.player_stats.format_general_stats()
         if self.player_position == 'DF':
             self.threat_stats = self.player_stats.format_threat_stats()
-            self.upfield_stats = self.player_stats.get_def_upfield_play_stats()
+            self.def_upfield_stats = self.player_stats.get_def_upfield_play_stats()
         elif self.player_position ==  'MF':
             self.threat_stats = self.player_stats.format_threat_stats()
             self.upfield_stats = self.player_stats.get_upfield_play_stats()
@@ -43,6 +43,12 @@ class StatCard:
             st.image(f'players/{self.image_path}.png', width=self.width,)
         with cols[1]:
             st.write('')
+            for i in range(1,3):
+                if self.general_stats[i] > 1000000:
+                    self.general_stats[i]  = str(round(((self.general_stats[i] ))/1000000,1)) +'m'
+                elif self.general_stats[i]> 10000:
+                    self.general_stats[i] = str(round(((self.general_stats[i]))/1000)) + 'k'
+
             st.metric(label='age', value =self.general_stats[0], delta=self.get_deltas(0))
             st.metric(label='salary', value =self.general_stats[1], delta=self.get_deltas(1))
             st.metric(label='value', value =self.general_stats[2], delta=self.get_deltas(2))
@@ -70,7 +76,10 @@ class StatCard:
             st.write('')
             st.metric(label='tackle success', value =str(self.threat_stats[4]) + '%', delta=self.get_deltas(12))
             st.metric(label='tackle/90', value =self.threat_stats[5], delta=self.get_deltas(13))
-            st.metric(label='takeon success', value =str(round(self.threat_stats[6])) + '%', delta=self.get_deltas(14) )
+            try:
+                st.metric(label='takeon success', value =str(round(self.threat_stats[6])) + '%', delta=self.get_deltas(14) )
+            except TypeError:
+                st.metric(label='takeon success', value ='NA' + '%', delta=self.get_deltas(14) )
             st.metric(label='fouls/90', value =self.threat_stats[7], delta=self.get_deltas(15))  
         return cols
     
@@ -80,10 +89,10 @@ class StatCard:
             st.image(f'players/{self.image_path}.png', width=self.width)
         with cols[2]:
             st.write('')
-            st.metric(label='prog carries/90', value =self.upfield_stats[0], delta=self.get_deltas(16))
-            st.metric(label='prog passes/90', value =self.upfield_stats[1], delta=self.get_deltas(17))
-            st.metric(label='pass to 3rd/90', value =self.upfield_stats[2], delta=self.get_deltas(18))
-            st.metric(label='key passes/90', value =self.upfield_stats[3], delta=self.get_deltas(19))
+            st.metric(label='prog carries/90', value =self.def_upfield_stats[0], delta=self.get_deltas(16))
+            st.metric(label='prog passes/90', value =self.def_upfield_stats[1], delta=self.get_deltas(17))
+            st.metric(label='pass to 3rd/90', value =self.def_upfield_stats[2], delta=self.get_deltas(18))
+            st.metric(label='key passes/90', value =self.def_upfield_stats[3], delta=self.get_deltas(19))
         return cols
     
     def get_upfield_stats(self):
@@ -182,3 +191,28 @@ class StatCard:
                 with tabs[2]:
                     self.get_scoring_stats()
         return expander
+
+
+
+def get_deltas(first_choice_stats, second_choice_stats):
+
+    delta_list_card1 = []
+    delta_list_card2 = []
+    for index, value in enumerate(first_choice_stats):
+        if second_choice_stats[index] != 0:
+            try:
+                delta1 = round(((value - second_choice_stats[index])/(second_choice_stats[index]))*100)
+            except TypeError:
+                delta1 = 'NA'
+        else: 
+            delta1 = 'NA'
+        delta_list_card1.append(delta1)
+        if value != 0:
+            try:
+                delta2 = round(((second_choice_stats[index]-value )/(value))*100)
+            except TypeError:
+                delta2 = 'NA'
+        else: 
+            delta2 = 'NA'            
+        delta_list_card2.append(delta2)
+    return delta_list_card1, delta_list_card2

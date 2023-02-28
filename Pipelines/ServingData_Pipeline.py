@@ -38,14 +38,6 @@ class PlayerStatFormatting:
             #touches per 90 min
             if index == 3:
                 player_general_stats[index] = round(value/self.ninetys)
-            #formatting salary and market value to human readable
-            try:
-                if value > 1000000:
-                    player_general_stats[index] = str(round(((value))/1000000,1)) +'m'
-                elif value> 10000:
-                    player_general_stats[index] = str(round(((value))/1000)) + 'k'
-            except TypeError:
-                pass
 
         return player_general_stats
     
