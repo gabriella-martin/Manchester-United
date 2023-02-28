@@ -5,7 +5,7 @@ import streamlit_nested_layout
 from pandasql import sqldf
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.app_logo import add_logo
-from Pipelines.ServingData_Pipeline import PlayerStatFormatting
+from Stat_Cards import MidfielderStatCard
 
 
 st.set_page_config(
@@ -16,9 +16,10 @@ st.set_page_config(
 
 add_logo("logo.png", height=210)
 
-st.markdown("<h1 style='text-align: center;color: black;'>Midfielders</h1>", unsafe_allow_html=True)
-style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shadow=True, border_size_px=1, border_radius_px=10)
 
+style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shadow=True, border_size_px=1, border_radius_px=10)
+with open('styles.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 pysqldf = lambda q: sqldf(q, globals())
 
 df = pd.read_csv('Player.csv')
@@ -34,77 +35,51 @@ name_list = [num for sublist in name_list for num in sublist]
 
 #midfielder stat card
 
-class MidfielderStatCard:
+st.markdown("<h1 style='text-align: center;color: black;'>Head to Head: United</h1>", unsafe_allow_html=True)
+st.write('')
+st.write('')
+cols = st.columns(2)
+with cols[0]:
+    st.write('')
+    first_choice = st.selectbox(label='Which midfielder would you like to compare', options = name_list )
 
-    def __init__(self,player):
-        self.player = player
-        self.image_path = ((self.player.split(' '))[-1]).lower()
-        s = PlayerStatFormatting(player)
-        self.minutes_played = round((s.ninetys)*90)
-        self.number = s.number
-        self.general_stats = s.format_general_stats()
-        self.threat_stats = s.format_threat_stats()
-        self.upfield_stats = s.get_upfield_play_stats()
+with cols[1]:
+    second_choice =st.selectbox(label='Who would you like to compare against?', options=name_list)
 
-    def make_card(self):
 
-            with st.expander(label=f'**{self.player}: {self.number}**', expanded=True ):
-                tabs = st.tabs(['General', 'Threat-Handling', 'Upfield Play' ])
-                with tabs[0]:
-                    cols = st.columns([8,4,4])
-                    with cols[0]:
-                        st.image(f'players/{self.image_path}.png', width=380,)
-                    with cols[1]:
-                        st.write('')
-                        st.metric(label='AGE', value =self.general_stats[0])
-                        st.metric(label='SALARY', value =self.general_stats[1])
-                        st.metric(label='MARKET VALUE', value =self.general_stats[2])
-                        st.metric(label='TOUCHES/90', value =self.general_stats[3])
-                    with cols[2]:
-                        st.write('')
-                        st.metric(label='PASS ACCURACY', value =str(round(self.general_stats[4])) + '%')
-                        st.metric(label='SHORT PASSES', value =str(round(self.general_stats[5])) + '%')
-                        st.metric(label='MEDIUM PASSES', value =str(round(self.general_stats[6])) + '%')
-                        st.metric(label='LONG PASSES', value =str(round(self.general_stats[7])) + '%')       
-                with tabs[1]:
-                    cols = st.columns([8,4,4])
-                    with cols[0]:
-                        st.image(f'players/{self.image_path}.png', width=400)
-                    with cols[1]:
-                        st.write('')
-                        st.metric(label='SHOT BLOCKS/90', value =self.threat_stats[0])
-                        st.metric(label='BLOCKS/90', value =self.threat_stats[1])
-                        st.metric(label='INTERCEPTIONS/90', value =self.threat_stats[2])
-                        st.metric(label='CLEARANCES/90', value =self.threat_stats[3])
-                    with cols[2]:
-                        st.write('')
-                        st.metric(label='TACKLE SUCCESS %', value =str(self.threat_stats[4]) + '%')
-                        st.metric(label='TACKLES/90', value =self.threat_stats[5])
-                        try:
-                            st.metric(label='TAKEON SUCCESS%', value =str(round(self.threat_stats[6])) + '%' )
-                        except TypeError:
-                            st.metric(label='TAKEON SUCCESS%', value ='NA' )
-                        st.metric(label='FOULS/90', value =self.threat_stats[7])  
+style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shadow=True, border_size_px=1, border_radius_px=10)
 
-                with tabs[2]:
-                    cols = st.columns([8,4,4])
-                    with cols[0]:
-                        st.image(f'players/{self.image_path}.png', width=400)
-                    with cols[1]:
-                        st.write('')
-                        st.metric(label='SHOTS/90', value =self.upfield_stats[0])
-                        st.metric(label='SHOTS ON TARGET/90', value =self.upfield_stats[1])
-                        st.metric(label='ASSISTS/90', value =self.upfield_stats[2])
-                        st.metric(label='GOALS/90', value =self.upfield_stats[3])     
-                    with cols[2]:
-                        st.write('')
-                        st.metric(label='PASS into PEN/90', value =self.upfield_stats[4])
-                        st.metric(label='PROG PASSES/90', value =self.upfield_stats[5])
-                        st.metric(label='PROG CARRIES/90', value =self.upfield_stats[6])
-                        st.metric(label='KEY PASSES/90', value =self.upfield_stats[7])     
+def get_stats(first_choice, second_choice):
+    first_choice_stats = MidfielderStatCard(player=first_choice,delta = None).general_stats +MidfielderStatCard(player=first_choice,delta = None).threat_stats+MidfielderStatCard(player=first_choice,delta = None).upfield_stats
+    second_choice_stats = MidfielderStatCard(player=second_choice,delta = None).general_stats +MidfielderStatCard(player=second_choice,delta = None).threat_stats+MidfielderStatCard(player=second_choice,delta = None).upfield_stats
+    first_choice_stats[1] = float(first_choice_stats[1][:-1])
+    first_choice_stats[2] = float(first_choice_stats[2][:-1])
+    second_choice_stats[1] = float(second_choice_stats[1][:-1])
+    second_choice_stats[2] = float(second_choice_stats[2][:-1])
+    delta_list_card1 = []
+    delta_list_card2 = []
+    for index, value in enumerate(first_choice_stats):
+        delta1 = round(((value - second_choice_stats[index])/(second_choice_stats[index]))*100)
+        delta2 = round(((second_choice_stats[index]-value )/(value))*100)
+        delta_list_card1.append(delta1)
+        delta_list_card2.append(delta2)
+    return delta_list_card1, delta_list_card2
+
+
+
+deltas = get_stats(first_choice, second_choice)
+cols = st.columns(2)
+with cols[0]:
+   df = MidfielderStatCard(player=first_choice, delta=deltas[0])
+   df.make_card()
+
+with cols[1]:
+   df = MidfielderStatCard(player=second_choice, delta=deltas[1])
+   df.make_card()
+
 
 #page layout
-                        
+st.markdown("<h1 style='text-align: center;color: black;'>Midfielders</h1>", unsafe_allow_html=True)                       
 large_cols = st.columns(2)
 for index, name in enumerate(name_list):
     if index%2 == 0:

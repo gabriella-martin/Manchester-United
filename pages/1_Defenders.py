@@ -6,7 +6,7 @@ import streamlit_nested_layout
 from pandasql import sqldf
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.app_logo import add_logo
-from Pipelines.ServingData_Pipeline import PlayerStatFormatting
+from Stat_Cards import DefenderStatCard
 
 st.set_page_config(
     page_title="Defenders",
@@ -15,92 +15,74 @@ st.set_page_config(
     initial_sidebar_state='collapsed')
 
 add_logo("logo.png", height=210)
-
-st.markdown("<h1 style='text-align: center;color: black;'>Defenders</h1>", unsafe_allow_html=True)
-style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shadow=True, border_size_px=1, border_radius_px=10)
-
+with open('styles.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 pysqldf = lambda q: sqldf(q, globals())
 
 df = pd.read_csv('Player.csv')
-
-#retrieving names of defenders who have played more than 90min as less than 90min gives inaccurate results
-
 defender_query = '''SELECT name from df WHERE position ='DF' and ninteys >1 ;'''
 names = pysqldf(defender_query).values
 name_list = []
 for i in names:
     name_list.append(i.tolist())
 name_list = [num for sublist in name_list for num in sublist]
+st.markdown("<h1 style='text-align: center;color: black;'>Head to Head: United</h1>", unsafe_allow_html=True)
+st.write('')
+st.write('')
+cols = st.columns(2)
+with cols[0]:
+    st.write('')
+    first_choice = st.selectbox(label='Which defender would you like to compare', options = name_list )
 
-#defender stat card
+with cols[1]:
+    second_choice =st.selectbox(label='Who would you like to compare against?', options=name_list)
 
-class DefenderStatCard:
-    def __init__(self,player):
-        self.player = player
-        self.image_path = ((self.player.split(' '))[-1]).lower()
-        s = PlayerStatFormatting(player)
-        self.number = s.number
-        self.general_stats = s.format_general_stats()
-        self.threat_stats = s.format_threat_stats()
-        self.upfield_stats = s.get_def_upfield_play_stats()
 
-    def make_card(self):
+style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shadow=True, border_size_px=1, border_radius_px=10)
 
-            with st.expander(label=f'**{self.player}: {self.number}**', expanded=True ):
-                tabs = st.tabs(['General', 'Threat-Handling', 'Upfield Play' ])
-                with tabs[0]:
-                    cols = st.columns([8,4,4])
-                    with cols[0]:
-                        st.image(f'players/{self.image_path}.png', width=380,)
-                    with cols[1]:
-                        st.write('')
-                        st.metric(label='AGE', value =self.general_stats[0])
-                        st.metric(label='SALARY', value =self.general_stats[1])
-                        st.metric(label='MARKET VALUE', value =self.general_stats[2])
-                        st.metric(label='TOUCHES/90', value =self.general_stats[3])
-                    with cols[2]:
-                        st.write('')
-                        st.metric(label='PASS ACCURACY', value =str(round(self.general_stats[4])) + '%')
-                        st.metric(label='SHORT PASSES', value =str(round(self.general_stats[5])) + '%')
-                        st.metric(label='MEDIUM PASSES', value =str(round(self.general_stats[6])) + '%')
-                        st.metric(label='LONG PASSES', value =str(round(self.general_stats[7])) + '%')        
-                with tabs[1]:
-                    cols = st.columns([8,4,4])
-                    with cols[0]:
-                        st.image(f'players/{self.image_path}.png', width=380)
-                    with cols[1]:
-                        st.write('')
-                        st.metric(label='SHOT BLOCKS/90', value =self.threat_stats[0])
-                        st.metric(label='BLOCKS/90', value =self.threat_stats[1])
-                        st.metric(label='INTERCEPTIONS/90', value =self.threat_stats[2])
-                        st.metric(label='CLEARANCES/90', value =self.threat_stats[3])
-                    with cols[2]:
-                        st.write('')
-                        st.metric(label='TACKLE SUCCESS %', value =str(self.threat_stats[4]) + '%')
-                        st.metric(label='TACKLES/90', value =self.threat_stats[5])
-                        st.metric(label='TAKEON SUCCESS%', value =str(round(self.threat_stats[6])) + '%' )
-                        st.metric(label='FOULS/90', value =self.threat_stats[7])  
+def get_stats(first_choice, second_choice):
+    first_choice_stats = DefenderStatCard(player=first_choice,delta = None).general_stats +DefenderStatCard(player=first_choice,delta = None).threat_stats+DefenderStatCard(player=first_choice,delta = None).upfield_stats
+    second_choice_stats = DefenderStatCard(player=second_choice,delta = None).general_stats +DefenderStatCard(player=second_choice,delta = None).threat_stats+DefenderStatCard(player=second_choice,delta = None).upfield_stats
+    first_choice_stats[1] = float(first_choice_stats[1][:-1])
+    first_choice_stats[2] = float(first_choice_stats[2][:-1])
+    second_choice_stats[1] = float(second_choice_stats[1][:-1])
+    second_choice_stats[2] = float(second_choice_stats[2][:-1])
+    delta_list_card1 = []
+    delta_list_card2 = []
+    for index, value in enumerate(first_choice_stats):
+        delta1 = round(((value - second_choice_stats[index])/(second_choice_stats[index]))*100)
+        delta2 = round(((second_choice_stats[index]-value )/(value))*100)
+        delta_list_card1.append(delta1)
+        delta_list_card2.append(delta2)
+    return delta_list_card1, delta_list_card2
 
-                with tabs[2]:
-                    cols = st.columns([8,4,4])
-                    with cols[0]:
-                        st.image(f'players/{self.image_path}.png', width=380)
-                    with cols[2]:
-                        st.write('')
-                        st.metric(label='PROG CARRIES/90', value =self.upfield_stats[0])
-                        st.metric(label='PROG PASSES/90', value =self.upfield_stats[1])
-                        st.metric(label='PASS TO 3rd/90', value =self.upfield_stats[2])
-                        st.metric(label='KEY PASSES/90', value =self.upfield_stats[3])     
+
+
+deltas = get_stats(first_choice, second_choice)
+cols = st.columns(2)
+with cols[0]:
+   df = DefenderStatCard(player=first_choice, delta=deltas[0])
+   df.make_card()
+
+with cols[1]:
+   df = DefenderStatCard(player=second_choice, delta=deltas[1])
+   df.make_card()
+
+#retrieving names of defenders who have played more than 90min as less than 90min gives inaccurate results
+
+st.markdown("<h1 style='text-align: center;color: black;'>Defender Roster</h1>", unsafe_allow_html=True)
 
 #page layout
-
-large_cols = st.columns(2)
-for index, name in enumerate(name_list):
-    if index%2 == 0:
-        with large_cols[0]:
-            df = DefenderStatCard(player=name)
-            df.make_card()
-    else:
-        with large_cols[1]:
-            df = DefenderStatCard(player=name)
-            df.make_card()
+@st.cache_data()
+def roster():
+    large_cols = st.columns(2)
+    for index, name in enumerate(name_list):
+        if index%2 == 0:
+            with large_cols[0]:
+                df = DefenderStatCard(player=name, delta = None)
+                df.make_card()
+        else:
+            with large_cols[1]:
+                df = DefenderStatCard(player=name, delta = None)
+                df.make_card()
+roster()
