@@ -43,7 +43,7 @@ st.write('')
 cols = st.columns(2)
 with cols[0]:
     st.write('')
-    first_choice = st.selectbox(label='Which midfielder would you like to compare', options = name_list )
+    first_choice = st.selectbox(label='Which Forward would you like to compare', options = name_list )
 
 with cols[1]:
     second_choice =st.selectbox(label='Who would you like to compare against?', options=name_list)
@@ -79,13 +79,12 @@ with cols[1]:
    df = ForwardStatCard(player=second_choice, delta=deltas[1])
    df.make_card()
 #page layout
-st.markdown("<h1 style='text-align: center;color: black;'>Forwards</h1>", unsafe_allow_html=True)
-large_cols = st.columns(2)
 
 @st.cache_data()
 def roster():
+    st.markdown("<h1 style='text-align: center;color: black;'>Forwards</h1>", unsafe_allow_html=True)                       
+    large_cols = st.columns(2)
     for index, name in enumerate(name_list):
-
         if index%2 == 0:
             with large_cols[0]:
                 df = ForwardStatCard(player=name)
