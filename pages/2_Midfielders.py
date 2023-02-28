@@ -79,14 +79,18 @@ with cols[1]:
 
 
 #page layout
-st.markdown("<h1 style='text-align: center;color: black;'>Midfielders</h1>", unsafe_allow_html=True)                       
-large_cols = st.columns(2)
-for index, name in enumerate(name_list):
-    if index%2 == 0:
-        with large_cols[0]:
-            df = MidfielderStatCard(player=name)
-            df.make_card()
-    else:
-        with large_cols[1]:
-            df = MidfielderStatCard(player=name)
-            df.make_card()
+@st.cache_data()
+def roster():
+    st.markdown("<h1 style='text-align: center;color: black;'>Midfielders</h1>", unsafe_allow_html=True)                       
+    large_cols = st.columns(2)
+    for index, name in enumerate(name_list):
+        if index%2 == 0:
+            with large_cols[0]:
+                df = MidfielderStatCard(player=name)
+                df.make_card()
+        else:
+            with large_cols[1]:
+                df = MidfielderStatCard(player=name)
+                df.make_card()
+
+roster()

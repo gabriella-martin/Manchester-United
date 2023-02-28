@@ -81,8 +81,11 @@ with cols[1]:
 #page layout
 st.markdown("<h1 style='text-align: center;color: black;'>Forwards</h1>", unsafe_allow_html=True)
 large_cols = st.columns(2)
-for index, name in enumerate(name_list):
-    if len(name_list)%2 == 0:
+
+@st.cache_data()
+def roster():
+    for index, name in enumerate(name_list):
+
         if index%2 == 0:
             with large_cols[0]:
                 df = ForwardStatCard(player=name)
@@ -91,17 +94,4 @@ for index, name in enumerate(name_list):
             with large_cols[1]:
                 df = ForwardStatCard(player=name)
                 df.make_card()
-    else:
-        if index%2 == 0:
-            with large_cols[0]:
-                df = ForwardStatCard(player=name)
-                df.make_card()
-        else:
-            if  index == len(name_list) -1:
-                cols = st.columns[1,5,1]
-                with cols[1]:
-                  df = ForwardStatCard(player=name)
-                  df.make_card()  
-            with large_cols[1]:
-                df = ForwardStatCard(player=name)
-                df.make_card()
+roster()
