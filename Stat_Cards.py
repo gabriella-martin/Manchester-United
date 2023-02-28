@@ -109,7 +109,11 @@ class StatCard:
         with cols[0]:
             st.image(f'players/{self.image_path}.png', width=self.width)
         with cols[1]:
-            st.write('') * 4
+            st.write('')
+            st.write('')
+            st.write('')
+            st.write('')
+            st.write('')
 
             st.metric(label='touches in 3rd/90', value =self.involvement_stats[0], delta =self.get_deltas(8))
             st.metric(label='touches in pen/90', value =self.involvement_stats[1], delta =self.get_deltas(9))

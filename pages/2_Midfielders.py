@@ -5,7 +5,7 @@ import streamlit_nested_layout
 from pandasql import sqldf
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.app_logo import add_logo
-from Stat_Cards import MidfielderStatCard
+from Stat_Cards import StatCard
 
 
 st.set_page_config(
@@ -50,8 +50,8 @@ with cols[1]:
 style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shadow=True, border_size_px=1, border_radius_px=10)
 
 def get_stats(first_choice, second_choice):
-    first_choice_stats = MidfielderStatCard(player=first_choice,delta = None).general_stats +MidfielderStatCard(player=first_choice,delta = None).threat_stats+MidfielderStatCard(player=first_choice,delta = None).upfield_stats
-    second_choice_stats = MidfielderStatCard(player=second_choice,delta = None).general_stats +MidfielderStatCard(player=second_choice,delta = None).threat_stats+MidfielderStatCard(player=second_choice,delta = None).upfield_stats
+    first_choice_stats = StatCard(player=first_choice,delta = None).general_stats +StatCard(player=first_choice,delta = None).threat_stats+StatCard(player=first_choice,delta = None).upfield_stats
+    second_choice_stats = StatCard(player=second_choice,delta = None).general_stats +StatCard(player=second_choice,delta = None).threat_stats+StatCard(player=second_choice,delta = None).upfield_stats
     first_choice_stats[1] = float(first_choice_stats[1][:-1])
     first_choice_stats[2] = float(first_choice_stats[2][:-1])
     second_choice_stats[1] = float(second_choice_stats[1][:-1])
@@ -81,27 +81,27 @@ def get_stats(first_choice, second_choice):
 deltas = get_stats(first_choice, second_choice)
 cols = st.columns(2)
 with cols[0]:
-   df = MidfielderStatCard(player=first_choice, delta=deltas[0])
-   df.make_card()
+   df = StatCard(player=first_choice, delta=deltas[0])
+   df.create_card()
 
 with cols[1]:
-   df = MidfielderStatCard(player=second_choice, delta=deltas[1])
-   df.make_card()
+   df = StatCard(player=second_choice, delta=deltas[1])
+   df.create_card()
 
 
 #page layout
-@st.cache_data()
+@st.cache_resource()
 def roster():
     st.markdown("<h1 style='text-align: center;color: black;'>Midfielders</h1>", unsafe_allow_html=True)                       
     large_cols = st.columns(2)
     for index, name in enumerate(name_list):
         if index%2 == 0:
             with large_cols[0]:
-                df = MidfielderStatCard(player=name)
-                df.make_card()
+                df = StatCard(player=name)
+                df.create_card()
         else:
             with large_cols[1]:
-                df = MidfielderStatCard(player=name)
-                df.make_card()
+                df = StatCard(player=name)
+                df.create_card()
 
 roster()
