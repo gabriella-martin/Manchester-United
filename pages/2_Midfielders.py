@@ -59,8 +59,19 @@ def get_stats(first_choice, second_choice):
     delta_list_card1 = []
     delta_list_card2 = []
     for index, value in enumerate(first_choice_stats):
-        delta1 = round(((value - second_choice_stats[index])/(second_choice_stats[index]))*100)
-        delta2 = round(((second_choice_stats[index]-value )/(value))*100)
+        try:
+            delta1 = round(((value - second_choice_stats[index])/(second_choice_stats[index]))*100)
+            
+        except OverflowError:
+            delta1 = None
+        try:
+            delta2 = round(((second_choice_stats[index]-value )/(value))*100)
+            
+        except OverflowError:
+            delta2 = None
+
+
+        
         delta_list_card1.append(delta1)
         delta_list_card2.append(delta2)
     return delta_list_card1, delta_list_card2
