@@ -1,31 +1,34 @@
 import streamlit as st
 from Pipelines.ServingData_Pipeline import PlayerStatFormatting
-
+from Pipelines.AveragePlayer_Pipeline import ClubStatFormatting
 class StatCard:
 
-    def __init__(self,player,delta=None):
+    def __init__(self,position,player=None,club=None,delta=None):
+        self.club = club
         self.player = player
+        self.position = position
         self.delta = delta
-
         #comparison cards with deltas are larger so make picture also large
-
         if self.delta != None:
             self.width = 425
         else:
             self.width = 335
-
-        self.image_path = ((self.player.split(' '))[-1]).lower()
-        self.player_stats = PlayerStatFormatting(player)
-        self.number = self.player_stats.number
-        self.player_position = self.player_stats.position
+        if self.club != None:
+            self.image_path=((self.club).lower())
+            self.player_stats = ClubStatFormatting(club=self.club, position=self.position)
+        else:
+            self.image_path = ((self.player.split(' '))[-1]).lower()
+            self.player_stats = PlayerStatFormatting(player)
+            self.number = self.player_stats.number
+        
         self.general_stats = self.player_stats.format_general_stats()
-        if self.player_position == 'DF':
+        if self.position == 'DF':
             self.threat_stats = self.player_stats.format_threat_stats()
             self.def_upfield_stats = self.player_stats.get_def_upfield_play_stats()
-        elif self.player_position ==  'MF':
+        elif self.position ==  'MF':
             self.threat_stats = self.player_stats.format_threat_stats()
             self.upfield_stats = self.player_stats.get_upfield_play_stats()
-        elif self.player_position == 'FW':
+        elif self.position == 'FW':
             self.involvement_stats = self.player_stats.get_forward_involvement_stats()
             self.scoring_stats = self.player_stats.format_goal_scoring_stats()
 
@@ -49,7 +52,7 @@ class StatCard:
                 elif self.general_stats[i]> 10000:
                     self.general_stats[i] = str(round(((self.general_stats[i]))/1000)) + 'k'
 
-            st.metric(label='age', value =self.general_stats[0], delta=self.get_deltas(0))
+            st.metric(label='age', value =round(self.general_stats[0]), delta=self.get_deltas(0))
             st.metric(label='salary', value =self.general_stats[1], delta=self.get_deltas(1))
             st.metric(label='value', value =self.general_stats[2], delta=self.get_deltas(2))
             st.metric(label='touches/90', value =self.general_stats[3], delta=self.get_deltas(3))
@@ -74,8 +77,8 @@ class StatCard:
             st.metric(label='clearances/90', value =self.threat_stats[3], delta=self.get_deltas(11))
         with cols[2]:
             st.write('')
-            st.metric(label='tackle success', value =str(self.threat_stats[4]) + '%', delta=self.get_deltas(12))
-            st.metric(label='tackle/90', value =self.threat_stats[5], delta=self.get_deltas(13))
+            st.metric(label='tackles/90', value =self.threat_stats[4], delta=self.get_deltas(12))
+            st.metric(label='tackle success', value =str(self.threat_stats[5]) + '%', delta=self.get_deltas(13))
             try:
                 st.metric(label='takeon success', value =str(round(self.threat_stats[6])) + '%', delta=self.get_deltas(14) )
             except TypeError:
@@ -162,8 +165,11 @@ class StatCard:
         DF_tabs = ['General', 'Threat-Handling', 'Upfield Play']
         MF_tabs = ['General', 'Threat-Handling', 'Upfield Play']
         FW_tabs = ['General', 'Game-Involvement', 'Goal-Involvement']
-        expander = st.expander(label=f'**{self.player}: {self.number}**', expanded=True )
-        if self.player_position == 'DF':
+        if self.club != None:
+            expander = st.expander(label=f'**{self.club}: {self.position} Average**', expanded=True )
+        else:
+            expander = st.expander(label=f'**{self.player}: {self.number}**', expanded=True )
+        if self.position == 'DF':
             with expander:
                 tabs = st.tabs(DF_tabs)
                 with tabs[0]:
@@ -172,7 +178,7 @@ class StatCard:
                     self.get_threat_handling_stats()
                 with tabs[2]:
                     self.get_def_upfield_stats()
-        elif self.player_position ==  'MF':
+        elif self.position ==  'MF':
             with expander:
                 tabs = st.tabs(MF_tabs)
                 with tabs[0]:
@@ -181,7 +187,7 @@ class StatCard:
                     self.get_threat_handling_stats()
                 with tabs[2]:
                     self.get_upfield_stats()
-        elif self.player_position == 'FW':
+        elif self.position == 'FW':
             with expander:
                 tabs = st.tabs(FW_tabs)
                 with tabs[0]:

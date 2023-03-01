@@ -14,3 +14,8 @@ st.set_page_config(
 add_logo("logo.png", height=210)
 
 st.write('# <- CLICK HERE TO SHOW SIDEBAR')
+
+from Stat_Cards import StatCard, get_deltas
+
+a = StatCard(club='Manchester-City', position='DF')
+a.create_card()
