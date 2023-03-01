@@ -1,15 +1,14 @@
 import pandas as pd
 from pandasql import sqldf
-
+import streamlit as st
 pysqldf = lambda q: sqldf(q, globals())
 
-df = pd.read_csv('Player.csv')
-
+df = pd.read_csv('Master.csv',index_col=0)
 
 
 class PlayerStatFormatting:
     
-    def __init__(self, player):
+    def __init__(self, player,):
         self.player = player
         ninentys_played_query = f"""SELECT ninteys from df WHERE name = '{self.player}'  ;"""
         position_query = f"""SELECT position from df WHERE name = '{self.player}';"""
@@ -61,6 +60,7 @@ class PlayerStatFormatting:
         player_threat_stats = self.get_threat_handling_stats()
         try:
             tackle_success = round((player_threat_stats[5]/player_threat_stats[4])*100)
+            
         except ZeroDivisionError:
             tackle_success = 'NA'
         for index, value in enumerate(player_threat_stats):
@@ -68,15 +68,13 @@ class PlayerStatFormatting:
                 # change successful tackle count to a % of tackles successful
                 if index == 5:
                     player_threat_stats[index] = tackle_success
-                elif index in range(0,4) or index == 7:
+                    
+                elif index in range(0,5) or index == 7:
                     player_threat_stats[index] = round(value/self.ninetys,1)
+       
             except TypeError:
                 pass
-        try:
-            player_threat_stats[5] = round(player_threat_stats[5]/self.ninetys,1)
-        except TypeError:
-            player_threat_stats[5] = 'NA'
-        return player_threat_stats   
+        return player_threat_stats
 
 
     def get_def_upfield_play_stats(self):
