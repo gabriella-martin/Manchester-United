@@ -41,9 +41,9 @@ class StatCard:
         return delta
 
     def get_general_stats(self):
-        cols = st.columns([8,5,5])
+        cols = st.columns([8,4.5,4.5])
         with cols[0]:
-            st.image(f'players/{self.image_path}.png', width=self.width,)
+            st.image(f'resources/{self.image_path}.png', width=self.width,)
         with cols[1]:
             st.write('')
             for i in range(1,3):
@@ -66,9 +66,9 @@ class StatCard:
         return cols
 
     def get_threat_handling_stats(self):
-        cols = st.columns([8,5,5])
+        cols = st.columns([8,4.5,4.5])
         with cols[0]:
-            st.image(f'players/{self.image_path}.png', width=self.width)
+            st.image(f'resources/{self.image_path}.png', width=self.width)
         with cols[1]:
             st.write('')
             st.metric(label='shot-blocks/90', value =self.threat_stats[0], delta=self.get_deltas(8))
@@ -87,9 +87,9 @@ class StatCard:
         return cols
     
     def get_def_upfield_stats(self):
-        cols = st.columns([8,5,5])
+        cols = st.columns([8,4.5,4.5])
         with cols[0]:
-            st.image(f'players/{self.image_path}.png', width=self.width)
+            st.image(f'resources/{self.image_path}.png', width=self.width)
         with cols[2]:
             st.write('')
             st.metric(label='prog carries/90', value =self.def_upfield_stats[0], delta=self.get_deltas(16))
@@ -99,9 +99,9 @@ class StatCard:
         return cols
     
     def get_upfield_stats(self):
-        cols = st.columns([8,5,5])
+        cols = st.columns([8,4.5,4.5])
         with cols[0]:
-            st.image(f'players/{self.image_path}.png', width=self.width)
+            st.image(f'resources/{self.image_path}.png', width=self.width)
         with cols[1]:
             st.write('')
             st.metric(label='shots/90', value =self.upfield_stats[0], delta =self.get_deltas(16))
@@ -117,9 +117,9 @@ class StatCard:
         return cols
 
     def get_involvement_stats(self):
-        cols = st.columns([8,5,5])
+        cols = st.columns([8,4.5,4.5])
         with cols[0]:
-            st.image(f'players/{self.image_path}.png', width=self.width)
+            st.image(f'resources/{self.image_path}.png', width=self.width)
         with cols[1]:
             st.write('')
             st.write('')
@@ -143,9 +143,9 @@ class StatCard:
         return cols
     
     def get_scoring_stats(self):
-        cols = st.columns([8,5,5])
+        cols = st.columns([8,4.5,4.5])
         with cols[0]:
-            st.image(f'players/{self.image_path}.png', width=self.width)
+            st.image(f'resources/{self.image_path}.png', width=self.width)
         with cols[1]:
             st.write('')
             st.metric(label='shots/90', value =self.scoring_stats[0], delta =self.get_deltas(14))
@@ -168,7 +168,7 @@ class StatCard:
         if self.club != None:
             expander = st.expander(label=f'**{self.club}: {self.position} Average**', expanded=True )
         else:
-            expander = st.expander(label=f'**{self.player}: {self.number}**', expanded=True )
+            expander = st.expander(label=f'**{self.player}: {int(self.number)}**', expanded=True )
         if self.position == 'DF':
             with expander:
                 tabs = st.tabs(DF_tabs)
