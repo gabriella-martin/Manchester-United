@@ -53,27 +53,24 @@ with cols[1]:
     second_choice =st.selectbox(label='Which team would you like to compare against?', options=clubs)
 
 
-def vs_premier_league(first_choice, second_choice):
+if first_choice == 'Manchester United':
+    first_choice_stats = StatCard(club=first_choice,position ='MF', delta = None).general_stats + StatCard(club=first_choice,position ='MF', delta = None).threat_stats + StatCard(club=first_choice,position ='MF', delta = None).upfield_stats
+else:
+    first_choice_stats = StatCard(player=first_choice,position ='MF', delta = None).general_stats + StatCard(player=first_choice,position ='MF', delta = None).threat_stats + StatCard(player=first_choice,position ='MF', delta = None).upfield_stats
+second_choice_stats = StatCard(club=second_choice,position ='MF', delta = None).general_stats + StatCard(club=second_choice,position ='MF', delta = None).threat_stats + StatCard(club=second_choice,position ='MF', delta = None).upfield_stats
+deltas = get_deltas(first_choice_stats, second_choice_stats)
+cols = st.columns(2)
+with cols[0]:
     if first_choice == 'Manchester United':
-        first_choice_stats = StatCard(club=first_choice,position ='MF', delta = None).general_stats + StatCard(club=first_choice,position ='MF', delta = None).threat_stats + StatCard(club=first_choice,position ='MF', delta = None).upfield_stats
+        data = StatCard(club=first_choice, position='MF', delta=deltas[0])
+        data.create_card()
     else:
-        first_choice_stats = StatCard(player=first_choice,position ='MF', delta = None).general_stats + StatCard(player=first_choice,position ='MF', delta = None).threat_stats + StatCard(player=first_choice,position ='MF', delta = None).upfield_stats
-    second_choice_stats = StatCard(club=second_choice,position ='MF', delta = None).general_stats + StatCard(club=second_choice,position ='MF', delta = None).threat_stats + StatCard(club=second_choice,position ='MF', delta = None).upfield_stats
-    deltas = get_deltas(first_choice_stats, second_choice_stats)
-    cols = st.columns(2)
-    with cols[0]:
-        if first_choice == 'Manchester United':
-            data = StatCard(club=first_choice, position='MF', delta=deltas[0])
+            data = StatCard(player=first_choice, position ='MF',delta=deltas[0])
             data.create_card()
-        else:
-                data = StatCard(player=first_choice, position ='MF',delta=deltas[0])
-                data.create_card()
-        with cols[1]:
-            data = StatCard(club=second_choice, position ='MF', delta=deltas[1])
-            data.create_card()
-    return cols
+    with cols[1]:
+        data = StatCard(club=second_choice, position ='MF', delta=deltas[1])
+        data.create_card()
 
-vs_premier_league(first_choice, second_choice)
 
 st.write('')
 st.write('')
@@ -96,27 +93,24 @@ with cols[1]:
     second_choice =st.selectbox(label='Who would you like to compare against?', options=reversed_name_list + ['Manchester United'])
 
 
-def vs_united(first_choice, second_choice):
-    first_choice_stats = StatCard(player=first_choice,position = 'MF', delta = None).general_stats + StatCard(player=first_choice,position = 'MF', delta = None).threat_stats + StatCard(player=first_choice,position = 'MF', delta = None).upfield_stats
-    if second_choice == 'Manchester United':
-        second_choice_stats = StatCard(club=second_choice,position ='MF', delta = None).general_stats + StatCard(club=second_choice,position ='MF', delta = None).threat_stats + StatCard(club=second_choice,position ='MF', delta = None).upfield_stats
-    else:
-        second_choice_stats = StatCard(player=second_choice,position = 'MF', delta = None).general_stats + StatCard(player=second_choice,position = 'MF', delta = None).threat_stats + StatCard(player=second_choice,position = 'MF', delta = None).upfield_stats
-    deltas = get_deltas(first_choice_stats, second_choice_stats)
-    cols = st.columns(2)
-    with cols[0]:
-        data = StatCard(player=first_choice, position = 'MF', delta=deltas[0])
-        data.create_card()
-        with cols[1]:
-            if second_choice == 'Manchester United':
-                data = StatCard(club=second_choice, position='MF', delta=deltas[1])
-                data.create_card()
-            else:
-                data = StatCard(player=second_choice, position ='MF',delta=deltas[1])
-                data.create_card()
-    return cols
+first_choice_stats = StatCard(player=first_choice,position = 'MF', delta = None).general_stats + StatCard(player=first_choice,position = 'MF', delta = None).threat_stats + StatCard(player=first_choice,position = 'MF', delta = None).upfield_stats
+if second_choice == 'Manchester United':
+    second_choice_stats = StatCard(club=second_choice,position ='MF', delta = None).general_stats + StatCard(club=second_choice,position ='MF', delta = None).threat_stats + StatCard(club=second_choice,position ='MF', delta = None).upfield_stats
+else:
+    second_choice_stats = StatCard(player=second_choice,position = 'MF', delta = None).general_stats + StatCard(player=second_choice,position = 'MF', delta = None).threat_stats + StatCard(player=second_choice,position = 'MF', delta = None).upfield_stats
+deltas = get_deltas(first_choice_stats, second_choice_stats)
+cols = st.columns(2)
+with cols[0]:
+    data = StatCard(player=first_choice, position = 'MF', delta=deltas[0])
+    data.create_card()
+    with cols[1]:
+        if second_choice == 'Manchester United':
+            data = StatCard(club=second_choice, position='MF', delta=deltas[1])
+            data.create_card()
+        else:
+            data = StatCard(player=second_choice, position ='MF',delta=deltas[1])
+            data.create_card()
 
-vs_united(first_choice, second_choice)
 
 st.write('')
 st.write('')
