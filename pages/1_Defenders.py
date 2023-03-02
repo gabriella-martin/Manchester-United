@@ -23,7 +23,7 @@ style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shad
 
 pysqldf = lambda q: sqldf(q, globals())
 
-@st.cache_data()
+@st.cache_data
 def load_database():
     df = pd.read_csv('Master.csv')
     return df
@@ -53,7 +53,6 @@ with cols[0]:
 with cols[1]:
     second_choice =st.selectbox(label='Which team would you like to compare against?', options=clubs)
 
-@st.cache_data()
 def vs_premier_league(first_choice, second_choice):
     if first_choice == 'Manchester United':
         first_choice_stats = StatCard(club=first_choice,position ='DF',delta = None).general_stats + StatCard(club=first_choice,position ='DF',delta = None).threat_stats + StatCard(club=first_choice,position ='DF',delta = None).def_upfield_stats
@@ -89,13 +88,13 @@ st.write('')
 
 cols = st.columns(2)
 with cols[0]:
-    first_choice = st.selectbox(label='Which defender would you like to compare', options = name_list )
+    first_choice = st.selectbox(label='Which defender would you like to compare', options = name_list, on_change=True )
 
 with cols[1]:
     reversed_name_list = name_list[::-1]
     second_choice =st.selectbox(label='Who would you like to compare against?', options=reversed_name_list + ['Manchester United'])
 
-@st.cache_data()
+
 def vs_united(first_choice, second_choice):
     first_choice_stats = StatCard(player=first_choice,position ='DF',delta = None).general_stats + StatCard(player=first_choice,position ='DF',delta = None).threat_stats + StatCard(player=first_choice,position ='DF',delta = None).def_upfield_stats
     if second_choice == 'Manchester United':
@@ -129,7 +128,7 @@ st.write('---')
 st.markdown("<h1 style='text-align: center;color: black;'>Defender Index</h1>", unsafe_allow_html=True)
 st.write('')
 
-@st.cache_data()
+@st.cache_data
 def roster():
     large_cols = st.columns(2)
     for index, name in enumerate(name_list):
