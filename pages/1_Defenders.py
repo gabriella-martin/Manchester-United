@@ -20,13 +20,18 @@ with open('styles.css') as f:
 style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shadow=True, border_size_px=1, border_radius_px=10)
 
 #function to return sql queries from pandas dataframe
-#TODO: loading player database - cache for speed
 
 pysqldf = lambda q: sqldf(q, globals())
-df = pd.read_csv('Master.csv')
+
+@st.cache_data()
+def load_database():
+    df = pd.read_csv('Master.csv')
+    return df
+
+df = load_database()
 
 #getting names of united defenders who have played more than a total of 90 minutes on pitch
-#making a list of these and unnesting that list for access TODO: also cache
+#making a list of these and unnesting that list for easy access 
 
 defender_query = '''SELECT name from df WHERE position ='DF' and ninteys >1 and club ='Manchester United' ;'''
 names = pysqldf(defender_query).values
@@ -48,25 +53,28 @@ with cols[0]:
 with cols[1]:
     second_choice =st.selectbox(label='Which team would you like to compare against?', options=clubs)
 
-if first_choice == 'Manchester United':
-    first_choice_stats = StatCard(club=first_choice,position ='DF',delta = None).general_stats + StatCard(club=first_choice,position ='DF',delta = None).threat_stats + StatCard(club=first_choice,position ='DF',delta = None).def_upfield_stats
-else:
-    first_choice_stats = StatCard(player=first_choice,position ='DF',delta = None).general_stats + StatCard(player=first_choice,position ='DF',delta = None).threat_stats + StatCard(player=first_choice,position ='DF',delta = None).def_upfield_stats
+@st.cache_data()
+def vs_premier_league(first_choice, second_choice):
+    if first_choice == 'Manchester United':
+        first_choice_stats = StatCard(club=first_choice,position ='DF',delta = None).general_stats + StatCard(club=first_choice,position ='DF',delta = None).threat_stats + StatCard(club=first_choice,position ='DF',delta = None).def_upfield_stats
+    else:
+        first_choice_stats = StatCard(player=first_choice,position ='DF',delta = None).general_stats + StatCard(player=first_choice,position ='DF',delta = None).threat_stats + StatCard(player=first_choice,position ='DF',delta = None).def_upfield_stats
+    second_choice_stats = StatCard(club=second_choice,position ='DF',delta = None).general_stats + StatCard(club=second_choice,position ='DF',delta = None).threat_stats + StatCard(club=second_choice,position ='DF',delta = None).def_upfield_stats
+    deltas = get_deltas(first_choice_stats, second_choice_stats)
+    cols = st.columns(2)
+    with cols[0]:
+        if first_choice == 'Manchester United':
+            data = StatCard(club=first_choice, position='DF', delta=deltas[0])
+            data.create_card()
+        else:
+                data = StatCard(player=first_choice, position ='DF',delta=deltas[0])
+                data.create_card()
+        with cols[1]:
+            data = StatCard(club=second_choice, position ='DF',delta=deltas[1])
+            data.create_card()
+    return cols
 
-second_choice_stats = StatCard(club=second_choice,position ='DF',delta = None).general_stats + StatCard(club=second_choice,position ='DF',delta = None).threat_stats + StatCard(club=second_choice,position ='DF',delta = None).def_upfield_stats
-deltas = get_deltas(first_choice_stats, second_choice_stats)
-
-cols = st.columns(2)
-with cols[0]:
-   if first_choice == 'Manchester United':
-       data = StatCard(club=first_choice, position='DF', delta=deltas[0])
-       data.create_card()
-   else:
-        data = StatCard(player=first_choice, position ='DF',delta=deltas[0])
-        data.create_card()
-with cols[1]:
-   data = StatCard(club=second_choice, position ='DF',delta=deltas[1])
-   data.create_card()
+vs_premier_league(first_choice, second_choice)
 
 st.write('')
 st.write('')
@@ -87,27 +95,28 @@ with cols[1]:
     reversed_name_list = name_list[::-1]
     second_choice =st.selectbox(label='Who would you like to compare against?', options=reversed_name_list + ['Manchester United'])
 
-first_choice_stats = StatCard(player=first_choice,position ='DF',delta = None).general_stats + StatCard(player=first_choice,position ='DF',delta = None).threat_stats + StatCard(player=first_choice,position ='DF',delta = None).def_upfield_stats
-
-if second_choice == 'Manchester United':
-    second_choice_stats = StatCard(club=first_choice,position ='DF',delta = None).general_stats + StatCard(club=first_choice,position ='DF',delta = None).threat_stats + StatCard(club=first_choice,position ='DF',delta = None).def_upfield_stats
-else:
-    second_choice_stats = StatCard(player=second_choice,position ='DF',delta = None).general_stats + StatCard(player=second_choice,position ='DF',delta = None).threat_stats + StatCard(player=second_choice,position ='DF',delta = None).def_upfield_stats
-
-deltas = get_deltas(first_choice_stats, second_choice_stats)
-
-cols = st.columns(2)
-with cols[0]:
-   data = StatCard(player=first_choice, position ='DF',delta=deltas[0])
-   data.create_card()
-
-with cols[1]:
+@st.cache_data()
+def vs_united(first_choice, second_choice):
+    first_choice_stats = StatCard(player=first_choice,position ='DF',delta = None).general_stats + StatCard(player=first_choice,position ='DF',delta = None).threat_stats + StatCard(player=first_choice,position ='DF',delta = None).def_upfield_stats
     if second_choice == 'Manchester United':
-        data = StatCard(club=second_choice, position='DF', delta=deltas[1])
-        data.create_card()
+        second_choice_stats = StatCard(club=first_choice,position ='DF',delta = None).general_stats + StatCard(club=first_choice,position ='DF',delta = None).threat_stats + StatCard(club=first_choice,position ='DF',delta = None).def_upfield_stats
     else:
-        data = StatCard(player=second_choice, position ='DF',delta=deltas[1])
+        second_choice_stats = StatCard(player=second_choice,position ='DF',delta = None).general_stats + StatCard(player=second_choice,position ='DF',delta = None).threat_stats + StatCard(player=second_choice,position ='DF',delta = None).def_upfield_stats
+    deltas = get_deltas(first_choice_stats, second_choice_stats)
+    cols = st.columns(2)
+    with cols[0]:
+        data = StatCard(player=first_choice, position ='DF',delta=deltas[0])
         data.create_card()
+        with cols[1]:
+            if second_choice == 'Manchester United':
+                data = StatCard(club=second_choice, position='DF', delta=deltas[1])
+                data.create_card()
+            else:
+                data = StatCard(player=second_choice, position ='DF',delta=deltas[1])
+                data.create_card()
+    return cols
+
+vs_united(first_choice, second_choice)
 
 st.write('')
 st.write('')
@@ -120,7 +129,7 @@ st.write('---')
 st.markdown("<h1 style='text-align: center;color: black;'>Defender Index</h1>", unsafe_allow_html=True)
 st.write('')
 
-@st.cache_resource()
+@st.cache_data()
 def roster():
     large_cols = st.columns(2)
     for index, name in enumerate(name_list):
