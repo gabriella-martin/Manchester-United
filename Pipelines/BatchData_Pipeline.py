@@ -6,28 +6,13 @@ from bs4 import BeautifulSoup
 
 # run this after each game for up-to-date results
 from unidecode import unidecode
-urls = {'Manchester-United':['https://fbref.com/en/squads/19538871/Manchester-United-Stats', 'https://salarysport.com/football/premier-league/manchester-united-f.c./', 'https://www.footballtransfers.com/en/teams/uk/man-utd', 'https://www.premierleague.com/clubs/12/Manchester-United/squad'],
-'Manchester-City': ['https://fbref.com/en/squads/b8fd03ef/Manchester-City-Stats', 'https://salarysport.com/football/premier-league/manchester-city-f.c./', 'https://www.footballtransfers.com/en/teams/uk/man-city', 'https://www.premierleague.com/clubs/11/Manchester-City/squad'], 'Arsenal': [
-    'https://fbref.com/en/squads/18bb7c10/Arsenal-Stats', 'https://salarysport.com/football/premier-league/arsenal-f.c./', 'https://www.footballtransfers.com/en/teams/uk/arsenal', 'https://www.premierleague.com/clubs/1/Arsenal/squad'], 
-    'Tottenham': ['https://fbref.com/en/squads/361ca564/Tottenham-Hotspur-Stats','https://salarysport.com/football/premier-league/tottenham-hotspur-f.c./','https://www.footballtransfers.com/en/teams/uk/tottenham', 'https://www.premierleague.com/clubs/21/Tottenham-Hotspur/squad'],
-     'Newcastle': ['https://fbref.com/en/squads/b2b47a98/Newcastle-United-Stats', 'https://salarysport.com/football/premier-league/newcastle-united-f.c./', 'https://www.footballtransfers.com/en/teams/uk/newcastle-utd', 'https://www.premierleague.com/clubs/23/Newcastle-United/squad'],
-      'Fulham' : ['https://fbref.com/en/squads/fd962109/Fulham-Stats','https://salarysport.com/football/premier-league/newcastle-united-f.c./','https://www.footballtransfers.com/en/teams/uk/newcastle-utd','https://www.premierleague.com/clubs/34/Fulham/squad'] }
 
-data_type = ['Data', 'Salary', 'Market-Value', 'Number']
-'''
-for key, value in urls.items():
-    for index, url in enumerate(value):
-        response = requests.get(url)
-        with open (f'{key}-{data_type[index]}', 'wb') as p:
-            p.write(response.content)'''
-
-clubs = ['Manchester-United', 'Manchester-City', 'Arsenal', 'Tottenham', 'Newcastle', 'Fulham']
-
+clubs = ['Arsenal','Aston Villa','Bournemouth','Brentford','Brighton','Chelsea','Crystal Palace','Everton','Fulham','Leeds','Leicester','Liverpool','Manchester City','Manchester United','Newcastle','Nottingham Forest','Southampton','Tottenham','West Ham','Wolves']
 class BrefParser:
     
     def __init__(self, club):
         self.club = club
-        with open(f'{self.club}-Data', 'rb') as pd:
+        with open(f'{self.club}-Football-Data', 'rb') as pd:
             self.soup = BeautifulSoup(pd.read(), 'html.parser')
             
     def standard_stats_table(self):
@@ -74,8 +59,8 @@ class BrefParser:
         for i in rows[2:-2]:
 
             for player in list_of_player_stats:
-                name = i.a.text
-                if name in player[0]:
+                name = unidecode(i.a.text)
+                if name in unidecode(player[0]):
                     goals_conceeded = (i.find('td', {'data-stat':'gk_goals_against'})).text
                     shots_on_target_against = (i.find('td', {'data-stat':'gk_shots_on_target_against'})).text
                     saves = (i.find('td', {'data-stat':'gk_saves'})).text
@@ -278,7 +263,7 @@ class DataProcessing:
         for player in list_of_player_stats:
 
             for index, data_point in enumerate(player):
-                if data_point == '':
+                if data_point == '' or data_point == '-':
                     player[index] = 'NULL'
 
         return list_of_player_stats
@@ -292,7 +277,7 @@ class DataProcessing:
     def export_to_csv(self):
         list_of_player_stats = self.add_club()
 
-
+        
         fields = ['name', 'nationality', 'position', 'age', 'matches_played', 'starts', 'minutes', 'ninteys','goals',
         'assists', 'yellow_card', 'red_card', 'progressive_carries', 'progressive_passes', 'goals_conceeded', 'shots_on_target_against', 
         'saves', 'clean_sheets', 'shots', 'shots_on_target', 'passes_com', 'passes_com_s', 'passes_com_m',
@@ -303,14 +288,12 @@ class DataProcessing:
         
         df = pd.DataFrame(list_of_player_stats, columns=fields)
 
-        df.to_csv(f'{self.club}-Players.csv')
-
         return df
-    
 
 if __name__ == '__main__':
         df_list = []
         for club in clubs:
+            print(club)
             list_of_player_stats = BrefParser(club).defending_stats_table()
             list_of_player_stats = SalaryParser(club, list_of_player_stats).get_salary()
             list_of_player_stats = MarketValueParser(club, list_of_player_stats).get_market_worth()

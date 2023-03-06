@@ -1,6 +1,5 @@
 import csv
 import requests 
-from bs4 import BeautifulSoup 
 from time import sleep
 with open('club_data_links.csv', newline='') as f:
     reader = csv.reader(f)

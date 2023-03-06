@@ -145,3 +145,32 @@ class PlayerStatFormatting:
         player_scoring_stats.insert(3, finishing_accuracy)
         return player_scoring_stats
     
+    def get_goalkeeping_stats(self):
+        goalkeeper_stats = ['goals_conceeded', 'shots_on_target_against', 'saves', 'clean_sheets']
+        player_goalkeeping_stats = []
+        for i in goalkeeper_stats:
+            q = f"""SELECT {i}
+                FROM df WHERE name = '{self.player}'
+                ;"""
+            goalkeeping_stat_values = (pysqldf(q)).values
+            for i in goalkeeping_stat_values:
+                player_goalkeeping_stats.append(i.tolist())
+        player_goalkeeping_stats = [num for sublist in player_goalkeeping_stats for num in sublist]
+        return player_goalkeeping_stats
+    
+    def format_goalkeeping_stats(self):
+        player_goalkeeping_stats = self.get_goalkeeping_stats()
+        save_percentage = round((player_goalkeeping_stats[2]/player_goalkeeping_stats[1])*100)
+        clean_sheets_percentage = round((player_goalkeeping_stats[3]/self.ninetys)*100)
+        goals_conceeded_per_90 =round((player_goalkeeping_stats[0]/self.ninetys),2)
+        saves_per_90 = round((player_goalkeeping_stats[2]/self.ninetys),1)
+        player_goalkeeping_stats = []
+        player_goalkeeping_stats.append(save_percentage)
+        player_goalkeeping_stats.append(goals_conceeded_per_90)
+        player_goalkeeping_stats.append(clean_sheets_percentage)
+        player_goalkeeping_stats.append(saves_per_90)
+        return player_goalkeeping_stats
+            
+
+            
+    
