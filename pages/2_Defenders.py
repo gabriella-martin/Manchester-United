@@ -18,7 +18,6 @@ add_logo("logo.png", height=210)
 with open('styles.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shadow=True, border_size_px=1, border_radius_px=10)
-
 #function to return sql queries from pandas dataframe
 
 pysqldf = lambda q: sqldf(q, globals())

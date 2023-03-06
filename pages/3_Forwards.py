@@ -125,7 +125,7 @@ st.write('---')
 
 #FORWARD INDEX
 
-st.markdown("<h1 style='text-align: center;color: black;'>Forward Roster</h1>", unsafe_allow_html=True) 
+st.markdown("<h1 style='text-align: center;color: black;'>Forward Index</h1>", unsafe_allow_html=True) 
 st.write('')
 
 @st.cache_data
