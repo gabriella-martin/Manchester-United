@@ -41,7 +41,7 @@ st.write('')
 cols = st.columns([5,5,5,5,5])
 
 with cols[1]:
-    st.image(f'resources/{next_match[1]}.png')
+    st.image(f'resources/{(next_match[1]).lower()}.png')
 
 with cols[2]:
     st.write('')
@@ -51,7 +51,7 @@ with cols[2]:
     st.markdown(f"<h1 style='text-align: center;color: black;'>vs</h1>", unsafe_allow_html=True)
 
 with cols[3]:
-    st.image(f'resources/{next_match[-1]}.png')
+    st.image(f'resources/{(next_match[-1]).lower()}.png')
 
 from Pipelines.GeneralStats_Pipeline import ClubGeneralStats
 df = pd.read_csv('Master.csv')
