@@ -100,7 +100,7 @@ with cols[1]:
 
 first_choice_stats = StatCard(player=first_choice,position = 'FW',delta = None).general_stats + StatCard(player=first_choice,position = 'FW',delta = None).involvement_stats + StatCard(player=first_choice,position = 'FW',delta = None).scoring_stats
 if second_choice == 'Manchester United':
-    second_choice_stats = StatCard(player=second_choice,position = 'FW',delta = None).general_stats + StatCard(player=second_choice,position = 'FW',delta = None).involvement_stats + StatCard(player=second_choice,position = 'FW',delta = None).scoring_stats
+    second_choice_stats = StatCard(club=second_choice,position = 'FW',delta = None).general_stats + StatCard(club=second_choice,position = 'FW',delta = None).involvement_stats + StatCard(club=second_choice,position = 'FW',delta = None).scoring_stats
 else:  
     second_choice_stats = StatCard(player=second_choice,position = 'FW',delta = None).general_stats + StatCard(player=second_choice,position = 'FW',delta = None).involvement_stats + StatCard(player=second_choice,position = 'FW',delta = None).scoring_stats
 deltas = get_deltas(first_choice_stats, second_choice_stats)
