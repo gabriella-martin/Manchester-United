@@ -14,7 +14,7 @@ class StatCard:
         else:
             self.width = 335
         if self.club != None:
-            self.image_path=((self.club).lower())
+            self.image_path=((self.club).lower()) + 'faceless'
             self.player_stats = ClubStatFormatting(club=self.club, position=self.position)
         else:
             self.image_path = ((self.player.split(' '))[-1]).lower()
@@ -31,7 +31,8 @@ class StatCard:
         elif self.position == 'FW':
             self.involvement_stats = self.player_stats.get_forward_involvement_stats()
             self.scoring_stats = self.player_stats.format_goal_scoring_stats()
-
+        elif self.position == 'GK':
+            self.goalkeeping_stats = self.player_stats.format_goalkeeping_stats()
     def get_deltas(self, number):
         if self.delta != None:
             delta = str(self.delta[number]) + '%'
@@ -160,11 +161,26 @@ class StatCard:
             st.metric(label='passes to pen/90', value =self.scoring_stats[7], delta =self.get_deltas(21))     
         return cols
 
+    def get_goalkeeping_stats(self):
+        
+        cols = st.columns([8,4.5,4.5])
+        with cols[0]:
+            st.image(f'resources/{self.image_path}.png', width=self.width)
+        with cols[2]:
+            st.write('')
+            st.metric(label='saves', value =str(self.goalkeeping_stats[0]) + '%', delta=self.get_deltas(8))
+            st.metric(label='goals conceeded /90', value =self.goalkeeping_stats[1], delta=self.get_deltas(9), delta_color='inverse')
+            st.metric(label='clean sheet', value =str(self.goalkeeping_stats[2]) +'%', delta=self.get_deltas(10))
+            st.metric(label='saves /90', value =self.goalkeeping_stats[3], delta=self.get_deltas(11))
+        return cols
+    
+
     def create_card(self):
 
         DF_tabs = ['General', 'Threat-Handling', 'Upfield Play']
         MF_tabs = ['General', 'Threat-Handling', 'Upfield Play']
         FW_tabs = ['General', 'Game-Involvement', 'Goal-Involvement']
+        GK_tabs = ['General', 'Saving']
         if self.club != None:
             expander = st.expander(label=f'**{self.club}: {self.position} Average**', expanded=True )
         else:
@@ -196,7 +212,16 @@ class StatCard:
                     self.get_involvement_stats()
                 with tabs[2]:
                     self.get_scoring_stats()
+        elif self.position == 'GK':
+            with expander:
+                tabs = st.tabs(GK_tabs)
+                with tabs[0]:
+                    self.get_general_stats()
+                with tabs[1]:
+                    self.get_goalkeeping_stats()
+        
         return expander
+    
 
 
 
