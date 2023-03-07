@@ -91,7 +91,7 @@ with cols[0]:
             for player_log in records:
                 goalscorers_united.append(player_log[0])
                 goals_united.append(player_log[1])
-        cur.close()
+            cur.close()
     dataframe1 = pd.DataFrame({'Name': goalscorers_united, 'Goals':goals_united})
     fig = px.pie(dataframe1, title ='Goals by Scorer',values='Goals', labels ='Name', names='Name', color_discrete_sequence=['red', 'black', '#fcf803', '#e6dfd8','#46bde8', '#ad6417', '#232247', '#663b7a'])
     st.plotly_chart(fig, use_container_width=True)
@@ -122,7 +122,7 @@ with cols[1]:
             for player_log in records:
                 goalscorers_opponent.append(player_log[0])
                 goals_opponent.append(player_log[1])
-        cur.close()
+            cur.close()
     dataframe2 = pd.DataFrame({'Name': goalscorers_opponent, 'Goals':goals_opponent})
 
     fig = px.pie(dataframe2, title ='Goals by Scorer',values='Goals', labels ='Name', names='Name', color_discrete_sequence=['red', 'black', '#fcf803', '#e6dfd8','#46bde8', '#ad6417', '#232247', '#663b7a'])
