@@ -1,6 +1,5 @@
 .env
 .streamlit/secrets.toml
-Player-Data
-Player-Market-Value
-Player-Salary
-Player-Number
+__pycache__
+Pipelines/__pycache__
+__pycache__/
