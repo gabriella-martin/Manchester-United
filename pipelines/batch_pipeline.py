@@ -1,13 +1,11 @@
 import pandas as pd
-import requests 
 from bs4 import BeautifulSoup 
-
-# PLAYER FOOTBALL STATS
-
-# run this after each game for up-to-date results
 from unidecode import unidecode
 
+#run this after PL each game for up-to-date results
+
 clubs = ['Arsenal','Aston Villa','Bournemouth','Brentford','Brighton','Chelsea','Crystal Palace','Everton','Fulham','Leeds','Leicester','Liverpool','Manchester City','Manchester United','Newcastle','Nottingham Forest','Southampton','Tottenham','West Ham','Wolves']
+
 class BrefParser:
     
     def __init__(self, club):
@@ -251,6 +249,7 @@ class DataProcessing:
         for index, value in enumerate(list_of_player_stats):
             if len(value) >47:
                 list_of_player_stats[index] = value[:-1]
+                
     def remove_ronaldo(self):
         for index, player in enumerate(list_of_player_stats):
             if player[0] == 'Cristiano Ronaldo':
@@ -277,7 +276,6 @@ class DataProcessing:
     def export_to_csv(self):
         list_of_player_stats = self.add_club()
 
-        
         fields = ['name', 'nationality', 'position', 'age', 'matches_played', 'starts', 'minutes', 'ninteys','goals',
         'assists', 'yellow_card', 'red_card', 'progressive_carries', 'progressive_passes', 'goals_conceeded', 'shots_on_target_against', 
         'saves', 'clean_sheets', 'shots', 'shots_on_target', 'passes_com', 'passes_com_s', 'passes_com_m',
@@ -302,4 +300,4 @@ if __name__ == '__main__':
             df_list.append(df)
 
 master_db = pd.concat(df_list, ignore_index=True)
-master_db.to_csv('Master.csv')
+master_db.to_csv('Players.csv')

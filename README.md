@@ -162,6 +162,8 @@ The full code for calculating club position specific averages can be viewed [her
 
 **Club General Data**
 
+*The database for this particular section can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/Fixtures.csv)*
+
 Grabbing the fixture results data allowed me to use python to code the logic behind the EPL league table - win is 3 points, draw is 1 etc. I created a class that would get detailed fixture data for any club. This class would return a dataframe with data from each fixture, here is a snippet of the code:
 ```python
     def create_club_dataframe(self):

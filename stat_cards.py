@@ -1,6 +1,7 @@
 import streamlit as st
-from Pipelines.ServingData_Pipeline import PlayerStatFormatting
-from Pipelines.AveragePlayer_Pipeline import ClubStatFormatting
+from pipelines.player_stats_pipeline import PlayerStatFormatting
+from pipelines.club_average_pipeline import ClubStatFormatting
+
 class StatCard:
 
     def __init__(self,position,player=None,club=None,delta=None):
@@ -8,11 +9,13 @@ class StatCard:
         self.player = player
         self.position = position
         self.delta = delta
+
         #comparison cards with deltas are larger so make picture also large
         if self.delta != None:
             self.width = 425
         else:
             self.width = 335
+
         if self.club != None:
             self.image_path=((self.club).lower()) + 'faceless'
             self.player_stats = ClubStatFormatting(club=self.club, position=self.position)
@@ -20,19 +23,24 @@ class StatCard:
             self.image_path = ((self.player.split(' '))[-1]).lower()
             self.player_stats = PlayerStatFormatting(player)
             self.number = self.player_stats.number
-        
+
         self.general_stats = self.player_stats.format_general_stats()
+        
         if self.position == 'DF':
             self.threat_stats = self.player_stats.format_threat_stats()
             self.def_upfield_stats = self.player_stats.get_def_upfield_play_stats()
+
         elif self.position ==  'MF':
             self.threat_stats = self.player_stats.format_threat_stats()
             self.upfield_stats = self.player_stats.get_upfield_play_stats()
+
         elif self.position == 'FW':
             self.involvement_stats = self.player_stats.get_forward_involvement_stats()
             self.scoring_stats = self.player_stats.format_goal_scoring_stats()
+
         elif self.position == 'GK':
             self.goalkeeping_stats = self.player_stats.format_goalkeeping_stats()
+
     def get_deltas(self, number):
         if self.delta != None:
             delta = str(self.delta[number]) + '%'
@@ -222,8 +230,6 @@ class StatCard:
         
         return expander
     
-
-
 
 def get_deltas(first_choice_stats, second_choice_stats):
 

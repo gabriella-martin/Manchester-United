@@ -1,35 +1,32 @@
 import pandas as pd
-from pandasql import sqldf
-pysqldf = lambda q: sqldf(q, globals())
-df = pd.read_csv('Fixtures.csv')
+import psycopg2
 import streamlit as st
+
+DATABASE_TYPE = 'postgresql'
+DBAPI = 'psycopg2'
+ENDPOINT = 'database-1.c0lrvxe9frij.eu-west-2.rds.amazonaws.com'
+USER = 'postgres'
+PASSWORD = st.secrets['DATABASE_PASSWORD'] 
+PORT = 5432
+DATABASE = 'football'
+
 class ClubGeneralStats:
     def __init__(self, club):
         self.club = club
-        club_query = f'''SELECT * from df WHERE (home_team ='{self.club}' or away_team = '{self.club}') and home_score is not NULL order by Date Asc ;'''
-        match_logs = pysqldf(club_query).values
+        club_query = f'''SELECT * from fixtures WHERE (home_team ='{self.club}' or away_team = '{self.club}') and home_goals is not NULL order by Date Asc ;'''
         match_results = []
-        for match in match_logs:
-            match_results.append(match.tolist())
-        self.match_results = [num for sublist in match_results for num in sublist]
+        with psycopg2.connect(host=ENDPOINT, user=USER, password=PASSWORD, dbname=DATABASE, port=PORT) as conn:
+            with conn.cursor() as cur:
+                cur.execute(club_query)
+                records = cur.fetchall()
+                for i in records:
+                    match_results.append(i)
+                    
+        self.match_results = match_results
 
-    def split_matches_from_match_results(self):
-        match = []
-        matches = []
-
-        #self.match_results is one long list of match data, each match has 5 datapoints, so split the list into 
-        #lists of size 5
-
-        for index, value in enumerate(self.match_results,1):
-            match.append(value)
-            if index % 5 == 0 or index == len(self.match_results):
-                matches.append(match)
-                match = []
-        return matches
     
     def get_match_results(self):
         
-        matches = self.split_matches_from_match_results()
         #each match is of the following format; date, home team, home goals, away goals & away team
 
         point_list = []
@@ -37,7 +34,7 @@ class ClubGeneralStats:
         goals_conceeded = []
         opponents = []
        
-        for match in matches:
+        for match in self.match_results:
             
             # home wins
             if match[1] == self.club and match[2] > match[3]:
@@ -121,16 +118,7 @@ def get_sum_of_points_for_each_club():
 
 
 list_of_points = get_sum_of_points_for_each_club()
-
 club_points = pd.DataFrame({'Club':clubs, 'Points':list_of_points})
 
-
-top_5_query=f'''SELECT Club from club_points where Club is not 'Manchester United' order by Points desc limit 5 ;'''
-
-match_logs = pysqldf(top_5_query).values
-match_results = []
-for match in match_logs:
-    match_results.append(match.tolist())
-match_results = [num for sublist in match_results for num in sublist]
 
 

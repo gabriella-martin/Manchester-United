@@ -1,6 +1,7 @@
 import csv
 import requests 
 from time import sleep
+
 with open('club_data_links.csv', newline='') as f:
     reader = csv.reader(f)
     data = list(reader)
