@@ -28,15 +28,17 @@ with open('resources/styles.css') as f:
 
 style_metric_cards(border_left_color='#d92025', border_color='#d92025', box_shadow=True, border_size_px=1, border_radius_px=10)
 
-# connecting to database & getting goalkeeper names
+#connecting to database & getting goalkeeper names
 
 name_list = []
+
 with psycopg2.connect(host=ENDPOINT, user=USER, password=PASSWORD, dbname=DATABASE, port=PORT) as conn:
     with conn.cursor() as cur:
         cur.execute('''SELECT name from players WHERE position ='GK' AND ninteys >1 AND club ='Manchester United';''')
         records = cur.fetchall()
         for i in records:
             name_list.append(i)
+        
 name_list = [num for sublist in name_list for num in sublist]
 conn.close()
  
