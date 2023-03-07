@@ -34,7 +34,7 @@ The project is split up into five main sections;
 
 ### 1) Scraping
 
-The link to all the club datasource links can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/club_data_links.csv), the code for grabbing the html can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/HTMLGrabber.py) and the code for parsing the HTML to retrieve the data and cleaning/processing the data can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/Pipelines/BatchData_Pipeline.py)
+The link to all the club datasource links can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/data/club_data_links.csv), the code for grabbing the html can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/pipelines/html_grabber.py) and the code for parsing the HTML to retrieve the data and cleaning/processing the data can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/pipelines/batch_pipeline.py)
 
 **Individual Player Data**
 
@@ -55,7 +55,7 @@ Rather than creating another scraper to get the table data, with all of this sea
 
 ### 2) Storing
 
-With my two databases, player data and fixture data, I first backed up the databases in a AWS S3 bucket using this [script](https://github.com/gabriella-martin/Manchester-United/blob/main/Pipelines/AWS_Pipeline.py). I then stored the database on a AWS PostgreSQL RDS. 
+With my two databases, player data and fixture data, I first backed up the databases in a AWS S3 bucket using this [script](https://github.com/gabriella-martin/Manchester-United/blob/main/pipelines/aws_pipeline.py). I then stored the database on a AWS PostgreSQL RDS. 
 
 Using SQL I then began to explore my data by writing queries, here is an example of finding the top goalscoring defenders in the premier league
 
@@ -91,7 +91,7 @@ port=PORT) as conn:
 
 **Player Data**:
 
-*The database for this particular section can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/Players.csv)*
+*The database for this particular section can be found [here](hhttps://github.com/gabriella-martin/Manchester-United/blob/main/data/players.csv)*
 
 I decided what attributes would be insightful for each position and came to the following categories:
 
@@ -105,7 +105,7 @@ I decided what attributes would be insightful for each position and came to the 
 
 In order for a player to be showcased by my web-application I set the requirement that they must have played over 90 minutes in total (this does not have to be consecutive) as this was the best way to ensure that the per 90 stats would be an accurate measure. For example if a player has only played for 10 minutes in total this season but managed to score a goal in this time, their goals per 90 would be 9 goals; a clearly innacurate measure. Adjusting the raw data to be per 90 minutes intuitivtely just allows for us to make meaningful comparisons between players.
 
-With these categories of data in mind, I coded a data pipeline that would connect to my AWS PostgreSQL RDS and query each metric with SQL. The full code for retrieving and formatting these statistics can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/Pipelines/ServingData_Pipeline.py). Each category of data has its own retrieving method and sometimes a formatting method, here is an example of the methods for the category 'threat handling'. The use of try/except is to handle any NULL datapoints or any situations where python would attempt to divide by 0. 
+With these categories of data in mind, I coded a data pipeline that would connect to my AWS PostgreSQL RDS and query each metric with SQL. The full code for retrieving and formatting these statistics can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/pipelines/player_stats_pipeline.py). Each category of data has its own retrieving method and sometimes a formatting method, here is an example of the methods for the category 'threat handling'. The use of try/except is to handle any NULL datapoints or any situations where python would attempt to divide by 0. 
 
 ```python
     def get_threat_handling_stats(self):
@@ -158,11 +158,11 @@ they instead looked like:
 ```python
 q = f"""SELECT AVG({value})FROM players WHERE club = '{self.club}' and position = '{self.position}';"""
 ```
-The full code for calculating club position specific averages can be viewed [here](https://github.com/gabriella-martin/Manchester-United/blob/main/Pipelines/AveragePlayer_Pipeline.py)
+The full code for calculating club position specific averages can be viewed [here](https://github.com/gabriella-martin/Manchester-United/blob/main/pipelines/club_average_pipeline.py)
 
 **Club General Data**
 
-*The database for this particular section can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/Fixtures.csv)*
+*The database for this particular section can be found [here](https://github.com/gabriella-martin/Manchester-United/blob/main/data/fixtures.csv)*
 
 Grabbing the fixture results data allowed me to use python to code the logic behind the EPL league table - win is 3 points, draw is 1 etc. I created a class that would get detailed fixture data for any club. This class would return a dataframe with data from each fixture, here is a snippet of the code:
 ```python
@@ -178,13 +178,13 @@ Grabbing the fixture results data allowed me to use python to code the logic beh
         df['Net Goals CMA'] =df['Net Goals'].expanding(1).mean()
         return df
 ```
-Intuitively, by looking at the 'Points Sum' column for each of the club dataframes, we can easily order the clubs by points to get the current table standings. The full code for these club-wide stats can be viewed [here](https://github.com/gabriella-martin/Manchester-United/blob/main/Pipelines/GeneralStats_Pipeline.py)
+Intuitively, by looking at the 'Points Sum' column for each of the club dataframes, we can easily order the clubs by points to get the current table standings. The full code for these club-wide stats can be viewed [here](https://github.com/gabriella-martin/Manchester-United/blob/main/pipelines/club_general_pipeline.py)
 
 ### 4) Visualising
 
 **Position Pages**
 
-With a pipeline of statistic retrival established, then came coding a visually appealing player card, this was coded using the Streamlit framework. Here is an example for what a forward stat card looks like, the full code for these stat cards can be viewed [here](https://github.com/gabriella-martin/Manchester-United/blob/main/Stat_Cards.py):
+With a pipeline of statistic retrival established, then came coding a visually appealing player card, this was coded using the Streamlit framework. Here is an example for what a forward stat card looks like, the full code for these stat cards can be viewed [here](https://github.com/gabriella-martin/Manchester-United/blob/main/stat_cards.py):
 
 <center> <img src = "resources/exampleforward.png" > </center>
 
