@@ -1,13 +1,15 @@
-import unittest
 import sys 
+import unittest
 sys.path.insert(1, '/Users/gabriellamartin/Manchester-United' )
+from bs4 import BeautifulSoup 
 from pipelines.batch_pipeline import FBrefParser, SalaryParser, MarketValueParser, PlayerNumberParser, DataProcessing
 from unittest.mock import patch, mock_open
-from bs4 import BeautifulSoup 
+
+
 
 class TestFBrefParser(unittest.TestCase):
     def setUp(self):
-        self.mock_path = 'mock_html/Mock'
+        self.mock_path = 'tests/mock_html/Mock'
         self.parser = FBrefParser(club=self.mock_path)
     
     @patch('builtins.open', new_callable=mock_open, read_data=b'fake html')
@@ -85,7 +87,7 @@ class TestSalaryParser(unittest.TestCase):
                            '0', '0', '0', '35', '100', '66', '10', '0', '0', '72.0', '100.0', '98.4', 
                            '43.2', '1', '2', '1', '832', '695', '828', '4', '0', '0', '', '100.0', '0', 
                            '2', '0', '0', '', '0', '0', '0', '10']]
-        self.mock_path = 'mock_html/Mock'
+        self.mock_path = 'tests/mock_html/Mock'
         self.parser = SalaryParser(club=self.mock_path, list_of_player_stats=list_of_player_stats)
         self.list_of_player_stats = self.parser.list_of_player_stats
         
@@ -111,7 +113,7 @@ class TestSalaryParser(unittest.TestCase):
 class TestMarketValueParser(unittest.TestCase):
 
     def setUp(self):
-        self.mock_path = 'mock_html/Mock'
+        self.mock_path = 'tests/mock_html/Mock'
         list_of_player_stats = [['David de Gea', 'ESP', 'GK', '32', '25', '25', 2250, '25.0', '0', '0', '0',
                            '0', '0', '0', '35', '100', '66', '10', '0', '0', '72.0', '100.0', '98.4', 
                            '43.2', '1', '2', '1', '832', '695', '828', '4', '0', '0', '', '100.0', '0', 
@@ -141,7 +143,7 @@ class TestMarketValueParser(unittest.TestCase):
 class TestPlayerNumberParser(unittest.TestCase):
 
     def setUp(self):
-        self.mock_path = 'mock_html/Mock'
+        self.mock_path = 'tests/mock_html/Mock'
         list_of_player_stats = [['David de Gea', 'ESP', 'GK', '32', '25', '25', 2250, '25.0', '0', '0', '0',
                            '0', '0', '0', '35', '100', '66', '10', '0', '0', '72.0', '100.0', '98.4', 
                            '43.2', '1', '2', '1', '832', '695', '828', '4', '0', '0', '', '100.0', '0', 
