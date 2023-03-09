@@ -22,7 +22,7 @@ This project aims to provide insights into the English Premier League as a whole
 
 I used Python for scraping the data, data manipulation and the Streamlit front-end framework with Pandas & Plotly to create a web-application to interactively visualise the data
 
-I store the data in an AWS PostgreSQL RDS and store a copy of the data in an AWS S3 bucket. Storing in the cloud allows me to have flexiblity to expand the database as there is an abundance of premier league data I can leverage in the future. Psycopg2 is used as a PostgreSQL adapter for Python
+I store the data in an AWS PostgreSQL RDS and store a copy of the data in an AWS S3 bucket. Storing in the cloud allows me to have flexiblity to expand the database as there is an abundance of premier league data that I can leverage in the future. Psycopg2 is used as a PostgreSQL adapter for Python
 
 The project is split up into five main sections;
 
