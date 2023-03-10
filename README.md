@@ -27,7 +27,7 @@ The main goal of this app is to analyse the performance of  Manchester United th
 
 Once loaded in to the database I query the data with SQL in my Python scripts with the Pscopg2 adapter and calculate some core metrics for each United player and the team as a whole. As the entirety of player premier league data is scraped and stored in this database, I can compare the United data to the rest of the Premier League and create interactive visualisations with Streamlit & Plotly. 
 
-##### Detailed Overview
+I store the data in an AWS PostgreSQL RDS and store a copy of the data in an AWS S3 bucket. Storing in the cloud allows me to have flexiblity to expand the database as there is an abundance of premier league data that I can leverage in the future. Psycopg2 is used as a PostgreSQL adapter for Python
 
 The app is split up into five main sections;
 
