@@ -119,7 +119,7 @@ def united_comparison(first_choice, second_choice):
                 data = StatCard(player=second_choice, position ='MF',delta=deltas[1])
                 data.create_card()
 
-united_comparison()
+united_comparison(first_choice, second_choice)
 
 st.write('')
 st.write('')
