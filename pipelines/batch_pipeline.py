@@ -2,16 +2,16 @@ import pandas as pd
 from bs4 import BeautifulSoup 
 from unidecode import unidecode
 
-#run this after PL each game for up-to-date results
+# run this after PL each game for up-to-date results
 
 clubs = ['Arsenal','Aston Villa','Bournemouth','Brentford','Brighton','Chelsea','Crystal Palace','Everton','Fulham','Leeds','Leicester','Liverpool','Manchester City','Manchester United','Newcastle','Nottingham Forest','Southampton','Tottenham','West Ham','Wolves']
 
-class BrefParser:
+class FBrefParser:
     
     def __init__(self, club):
         self.club = club
-        with open(f'{self.club}-Football-Data', 'rb') as pd:
-            self.soup = BeautifulSoup(pd.read(), 'html.parser')
+        with open(f'{self.club}-Football-Data', 'rb') as d:
+            self.soup = BeautifulSoup(d.read(), 'html.parser')
             
     def standard_stats_table(self):
         list_of_player_stats = []
@@ -45,8 +45,6 @@ class BrefParser:
             player_list = [name, nationality, position, age, matches_played, starts, minutes, ninetys,  goals, assists, cards_yellow, cards_red, progressive_carries, progressive_passes]
             for stat in player_list:
                 player.append(stat)
-
-
             list_of_player_stats.append(player)
         return(list_of_player_stats)
 
@@ -245,17 +243,17 @@ class DataProcessing:
 
     def __init__(self, club, list_of_player_stats):
         self.club = club
-        list_of_player_stats = list_of_player_stats
+        self.list_of_player_stats = list_of_player_stats
         for index, value in enumerate(list_of_player_stats):
             if len(value) >47:
                 list_of_player_stats[index] = value[:-1]
                 
     def remove_ronaldo(self):
-        for index, player in enumerate(list_of_player_stats):
+        for index, player in enumerate(self.list_of_player_stats):
             if player[0] == 'Cristiano Ronaldo':
-                list_of_player_stats.pop(index)
+                self.list_of_player_stats.pop(index)
 
-        return list_of_player_stats
+        return self.list_of_player_stats
 
     def empty_values_to_null(self):
         list_of_player_stats = self.remove_ronaldo()
@@ -291,13 +289,12 @@ class DataProcessing:
 if __name__ == '__main__':
         df_list = []
         for club in clubs:
-            print(club)
-            list_of_player_stats = BrefParser(club).defending_stats_table()
+            list_of_player_stats = FBrefParser(club).defending_stats_table()
             list_of_player_stats = SalaryParser(club, list_of_player_stats).get_salary()
             list_of_player_stats = MarketValueParser(club, list_of_player_stats).get_market_worth()
             list_of_player_stats = PlayerNumberParser(club, list_of_player_stats).get_player_number()
             df = DataProcessing(club, list_of_player_stats).export_to_csv()
             df_list.append(df)
 
-master_db = pd.concat(df_list, ignore_index=True)
-master_db.to_csv('Players.csv')
+        master_db = pd.concat(df_list, ignore_index=True)
+        master_db.to_csv('data/players.csv')
