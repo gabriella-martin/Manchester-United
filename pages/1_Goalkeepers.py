@@ -57,23 +57,26 @@ with cols[0]:
 with cols[1]:
     second_choice =st.selectbox(label='Which team would you like to compare against?', options=clubs)
 
-
-if first_choice == 'Manchester United':
-    first_choice_stats = StatCard(club=first_choice,position ='GK',delta = None).general_stats + StatCard(club=first_choice,position ='GK',delta = None).goalkeeping_stats 
-else:
-    first_choice_stats = StatCard(player=first_choice,position ='GK',delta = None).general_stats + StatCard(player=first_choice,position ='GK',delta = None).goalkeeping_stats 
-second_choice_stats = StatCard(club=second_choice,position ='GK',delta = None).general_stats + StatCard(club=second_choice,position ='GK',delta = None).goalkeeping_stats 
-
-deltas = get_deltas(first_choice_stats, second_choice_stats)
-
-cols = st.columns(2)
-with cols[0]:
+@st.cache_data
+def league_comparison(first_choice, second_choice):
     if first_choice == 'Manchester United':
-        data = StatCard(club=first_choice, position='GK', delta=deltas[0])
-        data.create_card()
+        first_choice_stats = StatCard(club=first_choice,position ='GK',delta = None).general_stats + StatCard(club=first_choice,position ='GK',delta = None).goalkeeping_stats 
     else:
-            data = StatCard(player=first_choice, position ='GK',delta=deltas[0])
+        first_choice_stats = StatCard(player=first_choice,position ='GK',delta = None).general_stats + StatCard(player=first_choice,position ='GK',delta = None).goalkeeping_stats 
+    second_choice_stats = StatCard(club=second_choice,position ='GK',delta = None).general_stats + StatCard(club=second_choice,position ='GK',delta = None).goalkeeping_stats 
+
+    deltas = get_deltas(first_choice_stats, second_choice_stats)
+
+    cols = st.columns(2)
+    with cols[0]:
+        if first_choice == 'Manchester United':
+            data = StatCard(club=first_choice, position='GK', delta=deltas[0])
             data.create_card()
-    with cols[1]:
-        data = StatCard(club=second_choice, position ='GK',delta=deltas[1])
-        data.create_card()
+        else:
+                data = StatCard(player=first_choice, position ='GK',delta=deltas[0])
+                data.create_card()
+        with cols[1]:
+            data = StatCard(club=second_choice, position ='GK',delta=deltas[1])
+            data.create_card()
+
+league_comparison(first_choice, second_choice)
