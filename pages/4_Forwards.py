@@ -52,7 +52,7 @@ st.write('')
 
 cols = st.columns(2)
 with cols[0]:
-    first_choice = st.selectbox(label='Which defender would you like to compare', options = name_list+ ['Manchester United'], key=23 )
+    first_choice = st.selectbox(label='Which forward would you like to compare', options = name_list+ ['Manchester United'], key=23 )
 
 with cols[1]:
     second_choice =st.selectbox(label='Which team would you like to compare against?', options=clubs)
@@ -95,7 +95,7 @@ st.write('')
 
 cols = st.columns(2)
 with cols[0]:
-    first_choice = st.selectbox(label='Which Forward would you like to compare', options = name_list )
+    first_choice = st.selectbox(label='Which forward would you like to compare', options = name_list )
 
 with cols[1]:
     reversed_name_list = name_list[::-1]
