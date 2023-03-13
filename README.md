@@ -19,7 +19,7 @@
           
 <br>
 
-***Disclaimer**: I use Streamlit Community Cloud (free) to host this project, as this is a free hosting service, the speed can be slightly slow, but streamlit was used to greatly simplify the front-end coding without sacrificing on aesthetics and allow me to focus on the back-end core of this project*
+***Disclaimer**: I use Streamlit Community Cloud (free) to host this project, as this is a free hosting service and it requires connecting to a large database, the speed for this particular app is **considerably slow**. But streamlit was used to greatly simplify the front-end coding without sacrificing on aesthetics and allow me to focus on the back-end core of this project. I am working on improving the speed but please be patient if you visit the app :)*
 
 ##### Introduction & Quick Overview
 
