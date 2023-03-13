@@ -39,7 +39,10 @@ class PlayerStatFormatting:
                 records = cur.fetchall()    
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try:
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_general_stats.append(i)
             cur.close()  
         
@@ -66,7 +69,10 @@ class PlayerStatFormatting:
                 records = cur.fetchall()    
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try:
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_threat_stats.append(i)
             cur.close()         
 
@@ -106,7 +112,10 @@ class PlayerStatFormatting:
                 records = cur.fetchall()    
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try:
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_upfield_stats.append(i)
             cur.close()      
         player_upfield_stats = [round(x/self.ninetys,1) for x in player_upfield_stats]
@@ -125,7 +134,10 @@ class PlayerStatFormatting:
                 records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try:
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_upfield_stats.append(i)
             cur.close()
 
@@ -144,7 +156,10 @@ class PlayerStatFormatting:
                 records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try:
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_involvement_stats.append(i)
             cur.close()
         player_involvement_stats = [round(x/self.ninetys,1) for x in player_involvement_stats]
@@ -162,7 +177,10 @@ class PlayerStatFormatting:
                 records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try:
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_scoring_stats.append(i)
             cur.close()  
 
@@ -191,7 +209,10 @@ class PlayerStatFormatting:
                 records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try:
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_goalkeeping_stats.append(i)
             cur.close()
         return player_goalkeeping_stats

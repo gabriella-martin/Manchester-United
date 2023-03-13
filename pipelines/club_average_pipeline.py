@@ -14,8 +14,7 @@ class ClubStatFormatting:
     def __init__(self, club, position):
         self.club = club
         self.position = position
-        with psycopg2.connect(host=ENDPOINT, user=USER, password=PASSWORD, dbname=DATABASE, port=PORT) as conn:
-            self.conn = conn
+        self.conn = psycopg2.connect(host=ENDPOINT, user=USER, password=PASSWORD, dbname=DATABASE, port=PORT) 
         with self.conn.cursor() as cur:
             ninentys_played_query = f"""SELECT SUM(ninteys) from players WHERE club = '{self.club}' AND ninteys >1  and position='{self.position}';"""
             cur.execute(ninentys_played_query)
@@ -44,7 +43,10 @@ class ClubStatFormatting:
                     records = cur.fetchall()    
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try: 
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_general_stats.append(i)
             cur.close()         
         return player_general_stats
@@ -78,7 +80,10 @@ class ClubStatFormatting:
                     records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try: 
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_threat_stats.append(i)
             cur.close()
         return player_threat_stats
@@ -116,7 +121,10 @@ class ClubStatFormatting:
                 records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try: 
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_upfield_stats.append(i)
             cur.close()
         player_upfield_stats = [round(x/self.ninetys,1) for x in player_upfield_stats]
@@ -135,7 +143,10 @@ class ClubStatFormatting:
                 records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try: 
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_upfield_stats.append(i)
             cur.close()
         player_upfield_stats = [round(x/self.ninetys,1) for x in player_upfield_stats]
@@ -154,7 +165,10 @@ class ClubStatFormatting:
                 records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try: 
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_involvement_stats.append(i)
             cur.close()
         player_involvement_stats = [round(x/self.ninetys,1) for x in player_involvement_stats]
@@ -173,7 +187,10 @@ class ClubStatFormatting:
                 records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try: 
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_scoring_stats.append(i)
             cur.close()
         return player_scoring_stats
@@ -199,7 +216,10 @@ class ClubStatFormatting:
                 records = cur.fetchall()
                 for i in records:
                     i = i[0]
-                    i = float(i)
+                    try: 
+                        i = float(i)
+                    except TypeError:
+                        pass
                     player_goalkeeping_stats.append(i)
             cur.close()
         
