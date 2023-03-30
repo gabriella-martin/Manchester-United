@@ -269,14 +269,13 @@ Date,Home_Team,Home_Score,Away_Score,Away_Team
 2023-03-18,Southampton,3,3,Tottenham
 2023-03-18,Chelsea,2,2,Everton
 2023-03-19,Arsenal,4,1,Crystal Palace
-2023-03-19,Manchester City,NULL,NULL,West Ham
-2023-04-01,Manchester City,NULL,NULL,Liverpool
-2023-04-01,Arsenal,NULL,NULL,Leeds
-2023-04-01,Nottingham Forest,NULL,NULL,Wolves
-2023-04-01,Brighton,NULL,NULL,Brentford
-2023-04-01,Crystal Palace,NULL,NULL,Leicester
-2023-04-01,Bournemouth,NULL,NULL,Fulham
-2023-04-01,Chelsea,NULL,NULL,Aston Villa
+2023-04-01,Manchester City,4,1,Liverpool
+2023-04-01,Arsenal,4,1,Leeds
+2023-04-01,Nottingham Forest,1,1,Wolves
+2023-04-01,Brighton,3,3,Brentford
+2023-04-01,Crystal Palace,2,1,Leicester
+2023-04-01,Bournemouth,2,1,Fulham
+2023-04-01,Chelsea,0,2,Aston Villa
 2023-04-02,West Ham,NULL,NULL,Southampton
 2023-04-02,Newcastle,NULL,NULL,Manchester United
 2023-04-03,Everton,NULL,NULL,Tottenham
