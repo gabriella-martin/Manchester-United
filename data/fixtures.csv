@@ -276,9 +276,9 @@ Date,Home_Team,Home_Score,Away_Score,Away_Team
 2023-04-01,Crystal Palace,2,1,Leicester
 2023-04-01,Bournemouth,2,1,Fulham
 2023-04-01,Chelsea,0,2,Aston Villa
-2023-04-02,West Ham,NULL,NULL,Southampton
-2023-04-02,Newcastle,NULL,NULL,Manchester United
-2023-04-03,Everton,NULL,NULL,Tottenham
+2023-04-02,West Ham,1,0,Southampton
+2023-04-02,Newcastle,2,0,Manchester United
+2023-04-03,Everton,1,1,Tottenham
 2023-04-04,Leeds,NULL,NULL,Nottingham Forest
 2023-04-04,Bournemouth,NULL,NULL,Brighton
 2023-04-04,Leicester,NULL,NULL,Aston Villa
