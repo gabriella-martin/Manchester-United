@@ -285,14 +285,14 @@ Date,Home_Team,Home_Score,Away_Score,Away_Team
 2023-04-04,Chelsea,0,0,Liverpool
 2023-04-05,West Ham,1,5,Newcastle
 2023-04-05,Manchester United,1,0,Brentford
-2023-04-08,Manchester United,NULL,NULL,Everton
-2023-04-08,Fulham,NULL,NULL,West Ham
-2023-04-08,Aston Villa,NULL,NULL,Nottingham Forest
-2023-04-08,Leicester,NULL,NULL,Bournemouth
-2023-04-08,Brentford,NULL,NULL,Newcastle
-2023-04-08,Wolves,NULL,NULL,Chelsea
-2023-04-08,Tottenham,NULL,NULL,Brighton
-2023-04-08,Leeds,NULL,NULL,Crystal Palace
+2023-04-08,Manchester United,2,0,Everton
+2023-04-08,Fulham,0,1,West Ham
+2023-04-08,Aston Villa,2,0,Nottingham Forest
+2023-04-08,Leicester,0,1,Bournemouth
+2023-04-08,Brentford,1,2,Newcastle
+2023-04-08,Wolves,1,0,Chelsea
+2023-04-08,Tottenham,2,1,Brighton
+2023-04-08,Leeds,1,5,Crystal Palace
 2023-04-09,Southampton,NULL,NULL,Manchester City
 2023-04-09,Liverpool,NULL,NULL,Arsenal
 2023-04-15,Aston Villa,NULL,NULL,Newcastle
