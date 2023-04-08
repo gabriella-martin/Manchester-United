@@ -293,8 +293,8 @@ Date,Home_Team,Home_Score,Away_Score,Away_Team
 2023-04-08,Wolves,1,0,Chelsea
 2023-04-08,Tottenham,2,1,Brighton
 2023-04-08,Leeds,1,5,Crystal Palace
-2023-04-09,Southampton,NULL,NULL,Manchester City
-2023-04-09,Liverpool,NULL,NULL,Arsenal
+2023-04-09,Southampton,1,4,Manchester City
+2023-04-09,Liverpool,2,2,Arsenal
 2023-04-15,Aston Villa,NULL,NULL,Newcastle
 2023-04-15,Chelsea,NULL,NULL,Brighton
 2023-04-15,Southampton,NULL,NULL,Crystal Palace
