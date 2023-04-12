@@ -81,7 +81,6 @@ with cols[0]:
     fig.update(layout_yaxis_range = [-2,5])
     st.plotly_chart(fig, use_container_width=True)
 
- 
     goalscorers_united = []
     goals_united = []
     with psycopg2.connect(host=ENDPOINT, user=USER, password=PASSWORD, dbname=DATABASE, port=PORT) as conn:
